@@ -1,26 +1,29 @@
 import axios from 'axios'
-import { AsyncStorage } from 'react-native';
+
+const urls = "http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/"
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc'
+
 
 export const getAllProduct = () => {
     return {
         type: "GET_PRODUCT",
-        payload: axios.get('http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/product/all', {
+        payload: axios.get(urls + 'product/all', {
             headers: {
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc'
+                token: token
             }
         })
     }
 }
-// export const addProduct = (fd) => {
-//     return {
-//         type: "ADD_PRODUCT",
-//         payload: axios.post(process.env.REACT_APP_URL + 'product', fd, {
-//             headers: {
-//                 token: localStorage.getItem('Token')
-//             }
-//         })
-//     }
-// }
+export const addProduct = (fd) => {
+    return {
+        type: "ADD_PRODUCT",
+        payload: axios.post(urls + 'product', fd, {
+            headers: {
+                token: token
+            }
+        })
+    }
+}
 // export const deleteProduct = (id) => {
 //     return {
 //         type: "DELETE_PRODUCT",

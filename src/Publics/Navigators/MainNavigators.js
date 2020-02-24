@@ -7,6 +7,9 @@ import Product from '../../Screens/Product';
 import Category from '../../Screens/Category';
 import Acount from '../../Screens/Acount'
 import Cart from '../../Screens/Cart'
+import InputProduct from '../../Screens/InputProduct'
+import InputCategory from '../../Screens/InputCategory'
+import EditCategory from '../../Components/EditCategory'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack'
@@ -15,7 +18,7 @@ import { connect } from 'react-redux'
 import { getToken } from '../Redux/actions/auth'
 
 const Tab = createBottomTabNavigator();
-
+const Stack = createStackNavigator();
 const MainNavigators = () => {
     return (
         <>
@@ -72,54 +75,42 @@ const MainNavigators = () => {
 }
 
 class AuthNavigator extends Component {
-    state = {
-        Token: ''
-    }
 
     render() {
         return (
-            <NavigationContainer>
-                <Tab.Navigator
-                    backBehavior="none"
-                    tabBarOptions={{
-                        activeTintColor: '#F4A501',
-                        activeBackgroundColor: 'grey',
+            <Tab.Navigator
+                initialRouteName="Login"
+                backBehavior="none"
+                tabBarOptions={{
+                    activeTintColor: '#F4A501',
+                    activeBackgroundColor: 'grey',
+                }}
+            >
+                <Tab.Screen
+                    name="Login"
+                    component={Login}
+                    options={{
+                        tabBarLabel: 'Login',
+                        tabBarVisible: false,
                     }}
-                >
-                    <Tab.Screen
-                        name="Login"
-                        component={Login}
-                        options={{
-                            tabBarLabel: 'Login',
-                            tabBarVisible: false,
-                        }}
-                    />
-                    <Tab.Screen
-                        name="Home"
-                        component={MainNavigators}
-                        options={{
-                            tabBarLabel: 'Home',
-                            tabBarVisible: false,
-                        }}
-                    />
-                    <Tab.Screen
-                        name="Register"
-                        component={Register}
-                        options={{
-                            tabBarLabel: 'Register',
-                            tabBarVisible: false,
-                        }}
-                    />
-                    <Tab.Screen
-                        name="Cart"
-                        component={Cart}
-                        options={{
-                            tabBarLabel: 'Cart',
-                            tabBarVisible: false,
-                        }}
-                    />
-                </Tab.Navigator>
-            </NavigationContainer >
+                />
+                <Tab.Screen
+                    name="Home"
+                    component={MainNavigators}
+                    options={{
+                        tabBarLabel: 'Home',
+                        tabBarVisible: false,
+                    }}
+                />
+                <Tab.Screen
+                    name="Register"
+                    component={Register}
+                    options={{
+                        tabBarLabel: 'Register',
+                        tabBarVisible: false,
+                    }}
+                />
+            </Tab.Navigator>
         )
     }
 }
@@ -127,16 +118,15 @@ class AuthNavigator extends Component {
 export const SubNavigator = () => {
     return (
         <>
-            <Tab.Navigator>
-                <Tab.Screen
-                    name="Cart"
-                    component={Cart}
-                    options={{
-                        tabBarLabel: 'Cart',
-                        tabBarVisible: false,
-                    }}
-                />
-            </Tab.Navigator>
+            <NavigationContainer>
+                <Stack.Navigator initialRouteName="Auth">
+                    <Stack.Screen name="Auth" component={AuthNavigator} options={{ headerShown: false }} />
+                    <Stack.Screen name='InputProduct' component={InputProduct} options={{ headerTitle: 'Add Product' }} />
+                    <Stack.Screen name='InputCategory' component={InputCategory} options={{ headerTitle: 'Add Category' }} />
+                    <Stack.Screen name='EditCategory' component={EditCategory} options={{ headerTitle: 'Edit Category' }} />
+                    <Stack.Screen name="Cart" component={Cart} />
+                </Stack.Navigator>
+            </NavigationContainer>
         </>
     )
 }
@@ -148,4 +138,4 @@ const mapStateToProps = ({ auth }) => {
 }
 
 
-export default connect(mapStateToProps)(AuthNavigator)
+export default connect(mapStateToProps)(SubNavigator)

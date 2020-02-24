@@ -1,28 +1,31 @@
 import React from 'react'
-import { ListItem, Thumbnail, Text, Left, Body, Right, Button } from 'native-base'
+import { TouchableOpacity, StyleSheet } from 'react-native'
+import { ListItem, Text, Body, Right } from 'native-base'
 
-const ListCategory = () => {
+const ListCategory = (props) => {
     return (
         <>
-            <ListItem thumbnail>
-                <Left>
-                    <Thumbnail square source={require('../Assets/img/home.png')} />
-                </Left>
+            <ListItem>
                 <Body>
-                    <Text>Sankhadeep</Text>
-                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                    <TouchableOpacity onPress={() => props.edit(props.data)}>
+                        <Text>{props.data.nama_category}</Text>
+                        <Text note numberOfLines={1}>80 item product in this category</Text>
+                    </TouchableOpacity>
                 </Body>
-                <Right style={{ flexDirection: 'row' }}>
-                    <Button transparent>
-                        <Text>Edit</Text>
-                    </Button>
-                    <Button transparent>
+                <Right>
+                    <TouchableOpacity style={styles.btn} onPress={() => props.onDelete(props.data.id)}>
                         <Text>Delete</Text>
-                    </Button>
+                    </TouchableOpacity>
                 </Right>
             </ListItem>
         </>
     )
 }
+
+const styles = StyleSheet.create({
+    btn: {
+        marginLeft: 5
+    }
+})
 
 export default ListCategory

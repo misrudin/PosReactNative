@@ -1,24 +1,24 @@
 import React from 'react'
-import { ListItem, Thumbnail, Text, Left, Body, Right, Button } from 'native-base'
+import { TouchableOpacity } from 'react-native'
+import { ListItem, Thumbnail, Text, Left, Body, Right } from 'native-base'
 
-const ListProduct = () => {
+const ListProduct = (props) => {
     return (
         <>
             <ListItem thumbnail>
-                <Left>
-                    <Thumbnail square source={require('../Assets/img/home.png')} />
-                </Left>
-                <Body>
-                    <Text>Sankhadeep</Text>
-                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                </Body>
+                <TouchableOpacity>
+                    <Left>
+                        <Thumbnail square source={{ uri: props.data.image }} />
+                    </Left>
+                    <Body>
+                        <Text>{props.data.name}</Text>
+                        <Text note numberOfLines={1}>{props.data.description}</Text>
+                    </Body>
+                </TouchableOpacity>
                 <Right style={{ flexDirection: 'row' }}>
-                    <Button transparent>
-                        <Text>Edit</Text>
-                    </Button>
-                    <Button transparent>
+                    <TouchableOpacity>
                         <Text>Delete</Text>
-                    </Button>
+                    </TouchableOpacity>
                 </Right>
             </ListItem>
         </>

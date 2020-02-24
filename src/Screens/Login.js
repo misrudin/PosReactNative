@@ -9,12 +9,13 @@ class Login extends Component {
         password: '',
         msg: '',
         token: '',
-        show: false
+        show: false,
+        tokenData: ''
     }
 
     saveToken = async Token => {
         try {
-            const token = JSON.stringify({ token: Token, login: true })
+            const token = JSON.stringify(Token)
             await AsyncStorage.setItem('Token', token);
         } catch (error) {
             console.log(error.message);
@@ -38,6 +39,23 @@ class Login extends Component {
                     this.props.navigation.navigate('Home')
                 }
             })
+    }
+
+
+    getToken = async () => {
+        await AsyncStorage.getItem('Token', (err, token) => {
+            this.setState({
+                tokenData: token
+            })
+            console.log('ini token', token)
+        })
+    }
+
+    componentDidMount = async () => {
+        await this.getToken()
+        if (this.state.tokenData) {
+            this.props.navigation.navigate('Home')
+        }
     }
 
     render() {

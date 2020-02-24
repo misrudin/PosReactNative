@@ -6,6 +6,12 @@ class Acount extends Component {
 	state = {
 
 	}
+
+	handleLogout = () => {
+		AsyncStorage.removeItem('Token')
+		alert('logout')
+		this.props.navigation.navigate('Login')
+	}
 	render() {
 		return (
 
@@ -22,7 +28,7 @@ class Acount extends Component {
 					<TouchableOpacity style={{ backgroundColor: 'salmon', width: '50%', padding: 10, borderRadius: 8, marginTop: 20 }}>
 						<Text style={{ textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: 16 }}>Change Profile</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={{ backgroundColor: 'salmon', width: '50%', padding: 10, borderRadius: 8, marginTop: 20 }}>
+					<TouchableOpacity onPress={() => this.handleLogout()} style={{ backgroundColor: 'salmon', width: '50%', padding: 10, borderRadius: 8, marginTop: 20 }}>
 						<Text style={{ textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: 16 }}>Logout</Text>
 					</TouchableOpacity>
 				</View>

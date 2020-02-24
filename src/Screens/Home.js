@@ -40,7 +40,7 @@ class Home extends Component {
         return (
             <View style={styles.container}>
                 <View style={{ position: 'relative', paddingHorizontal: 16, paddingVertical: 10, backgroundColor: 'white', flexDirection: 'row' }}>
-                    <Header onPress={()=> this.props.navigation.navigate('Cart')} />
+                    <Header onPress={() => this.props.navigation.navigate('Cart')} />
                 </View>
                 {/* content */}
                 <ScrollView>
@@ -48,14 +48,6 @@ class Home extends Component {
                         {/* Hot featured */}
                         <View style={{ backgroundColor: '#ddd', paddingVertical: 10, flex: 1 }}>
                             <ScrollView horizontal style={{ height: '100%', borderRadius: 5, flexDirection: 'row', paddingLeft: 16 }}>
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
                                 <Hot />
                                 <Hot />
                                 <Hot />
