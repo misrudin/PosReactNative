@@ -1,28 +1,63 @@
 import React from 'react'
-import { ListItem, Thumbnail, Text, Left, Body, Right, Button } from 'native-base'
+import { TouchableOpacity, StyleSheet, Text, View, Image } from 'react-native'
 
-const ListCart = () => {
+const ListCart = (props) => {
     return (
-        <>
-            <ListItem thumbnail>
-                <Left>
-                    <Thumbnail square source={require('../Assets/img/home.png')} />
-                </Left>
-                <Body>
-                    <Text>Sankhadeep</Text>
-                    <Text note numberOfLines={1}>Its time to build a difference . .</Text>
-                </Body>
-                <Right style={{ flexDirection: 'row' }}>
-                    <Button transparent>
-                        <Text>Edit</Text>
-                    </Button>
-                    <Button transparent>
-                        <Text>Delete</Text>
-                    </Button>
-                </Right>
-            </ListItem>
-        </>
+        <View style={styles.container}>
+            <View style={styles.sectionleft}>
+                <View>
+                    <Image style={styles.img} />
+                </View>
+                <View >
+                    <View style={{ flexDirection: "column", justifyContent: 'flex-start', marginLeft: 10 }}>
+                        <Text style={{ color: '#0000ff', fontWeight: 'bold', fontSize: 16 }} >{props.name}</Text>
+                        <Text style={{ color: "#acacac" }}>Rp. {props.price}</Text>
+                    </View>
+                    <View style={{ flexDirection: "row", marginLeft: 30, alignItems: 'center' }}>
+                        <TouchableOpacity>
+                            <Text style={styles.reducer}>-</Text>
+                        </TouchableOpacity>
+                        <Text style={{ color: '#999', marginRight: 30 }}>0</Text>
+                        <TouchableOpacity>
+                            <Text style={styles.reducer}>+</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+            <View style={styles.sectionright}>
+                <TouchableOpacity style={{ marginRight: 10 }} onPress={() => props.onDelete(props.data.id)}>
+                    <Text style={{ color: 'salmon', fontSize: 14, fontWeight: 'bold' }}>Remove</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderColor: '#ddd'
+    },
+    sectionleft: {
+        flex: 1,
+        flexDirection: 'row'
+    },
+    img: {
+        width: 70,
+        height: 70,
+        borderWidth: 1,
+        borderColor: '#ddd'
+    },
+    reducer: {
+        marginRight: 30,
+        fontWeight: 'bold',
+        fontSize: 25,
+        color: 'green'
+    }
+})
 
 export default ListCart

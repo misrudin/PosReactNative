@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
 import Navbar from '../Components/Navbar'
 import Content from '../Components/Content'
 import Hot from '../Components/Hot'
@@ -39,7 +39,7 @@ class Home extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <View style={{ position: 'relative', paddingHorizontal: 16, paddingVertical: 10, backgroundColor: 'white', flexDirection: 'row' }}>
+                <View style={{ position: 'relative', paddingHorizontal: 16, paddingVertical: 10, backgroundColor: 'white', flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ddd' }}>
                     <Header onPress={() => this.props.navigation.navigate('Cart')} />
                 </View>
                 {/* content */}
@@ -47,7 +47,13 @@ class Home extends Component {
                     <View style={styles.content}>
                         {/* Hot featured */}
                         <View style={{ backgroundColor: '#ddd', paddingVertical: 10, flex: 1 }}>
-                            <ScrollView horizontal style={{ height: '100%', borderRadius: 5, flexDirection: 'row', paddingLeft: 16 }}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: '100%', borderRadius: 5, flexDirection: 'row', paddingLeft: 16 }}>
+                                <Hot />
+                                <Hot />
+                                <Hot />
+                                <Hot />
+                                <Hot />
+                                <Hot />
                                 <Hot />
                                 <Hot />
                                 <Hot />
@@ -58,13 +64,15 @@ class Home extends Component {
 
                         <View style={{ paddingHorizontal: 10, flex: 1, backgroundColor: '#eee', flexDirection: 'row', flexWrap: 'wrap' }}>
                             {
-                                this.state.product ?
+                                !this.props.product.isPending ?
                                     this.state.product.map(data => {
                                         return (
                                             <Content key={data.id} data={data} />
                                         )
                                     }) : (
-                                        <Text>Loading gaes...</Text>
+                                        <View style={{ flex: 1, backgroundColor: '#eee', marginTop: '50%' }}>
+                                            <ActivityIndicator size="large" color="#0000ff" />
+                                        </View>
                                     )
                             }
                         </View>
@@ -79,7 +87,7 @@ class Home extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: '#eee',
         flexDirection: 'column'
     },
     content: {

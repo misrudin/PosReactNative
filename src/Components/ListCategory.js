@@ -1,30 +1,36 @@
 import React from 'react'
-import { TouchableOpacity, StyleSheet } from 'react-native'
-import { ListItem, Text, Body, Right } from 'native-base'
+import { TouchableOpacity, StyleSheet, Text, View } from 'react-native'
 
 const ListCategory = (props) => {
+    console.log(props)
     return (
-        <>
-            <ListItem>
-                <Body>
-                    <TouchableOpacity onPress={() => props.edit(props.data)}>
-                        <Text>{props.data.nama_category}</Text>
-                        <Text note numberOfLines={1}>80 item product in this category</Text>
-                    </TouchableOpacity>
-                </Body>
-                <Right>
-                    <TouchableOpacity style={styles.btn} onPress={() => props.onDelete(props.data.id)}>
-                        <Text>Delete</Text>
-                    </TouchableOpacity>
-                </Right>
-            </ListItem>
-        </>
+        <View style={styles.container}>
+            <View style={styles.sectionleft}>
+                <TouchableOpacity onPress={() => props.edit(props.data)}>
+                    <Text style={{ color: '#0000ff', fontWeight: 'bold', fontSize: 16 }} >{props.data.nama_category}</Text>
+                    <Text style={{ color: "#acacac" }}>80 item product in this category</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.sectionright}>
+                <TouchableOpacity style={{ marginRight: 10 }} onPress={() => props.onDelete(props.data.id)}>
+                    <Text style={{ color: 'salmon', fontSize: 14, fontWeight: 'bold' }}>Delete</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    btn: {
-        marginLeft: 5
+    container: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderColor: '#ddd'
+    },
+    sectionleft: {
+        flex: 1
     }
 })
 

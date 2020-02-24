@@ -7,15 +7,13 @@ import Product from '../../Screens/Product';
 import Category from '../../Screens/Category';
 import Acount from '../../Screens/Acount'
 import Cart from '../../Screens/Cart'
+import Loading from '../../Screens/Loading'
 import InputProduct from '../../Screens/InputProduct'
 import InputCategory from '../../Screens/InputCategory'
 import EditCategory from '../../Components/EditCategory'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack'
-import AsyncStorage from '@react-native-community/async-storage';
-import { connect } from 'react-redux'
-import { getToken } from '../Redux/actions/auth'
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -23,6 +21,7 @@ const MainNavigators = () => {
     return (
         <>
             <Tab.Navigator
+                initialRouteName="Home"
                 backBehavior="none"
                 tabBarOptions={{
                     activeTintColor: '#F4A501',
@@ -79,13 +78,21 @@ class AuthNavigator extends Component {
     render() {
         return (
             <Tab.Navigator
-                initialRouteName="Login"
+                initialRouteName="loading"
                 backBehavior="none"
                 tabBarOptions={{
                     activeTintColor: '#F4A501',
                     activeBackgroundColor: 'grey',
                 }}
             >
+                <Tab.Screen
+                    name="Loading"
+                    component={Loading}
+                    options={{
+                        tabBarLabel: 'Loading',
+                        tabBarVisible: false,
+                    }}
+                />
                 <Tab.Screen
                     name="Login"
                     component={Login}
@@ -131,11 +138,7 @@ export const SubNavigator = () => {
     )
 }
 
-const mapStateToProps = ({ auth }) => {
-    return {
-        auth
-    }
-}
 
 
-export default connect(mapStateToProps)(SubNavigator)
+
+export default SubNavigator

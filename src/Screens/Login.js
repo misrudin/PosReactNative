@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -13,7 +13,7 @@ class Login extends Component {
         tokenData: ''
     }
 
-    saveToken = async Token => {
+    saveToken = async (Token) => {
         try {
             const token = JSON.stringify(Token)
             await AsyncStorage.setItem('Token', token);
@@ -42,21 +42,6 @@ class Login extends Component {
     }
 
 
-    getToken = async () => {
-        await AsyncStorage.getItem('Token', (err, token) => {
-            this.setState({
-                tokenData: token
-            })
-            console.log('ini token', token)
-        })
-    }
-
-    componentDidMount = async () => {
-        await this.getToken()
-        if (this.state.tokenData) {
-            this.props.navigation.navigate('Home')
-        }
-    }
 
     render() {
         return (
@@ -69,8 +54,8 @@ class Login extends Component {
                         <Text style={{ fontSize: 30, fontWeight: "bold", color: 'grey' }}>Login</Text>
                     </View>
                     <View style={{ paddingHorizontal: 16 }}>
-                        <TextInput onChangeText={(e) => this.setState({ username: e })} value={this.state.username} placeholder='Username...' style={styles.textInput} />
-                        <TextInput onChangeText={(e) => this.setState({ password: e })} value={this.state.password} placeholder='Password...' style={styles.textInput} />
+                        <TextInput onChangeText={(e) => this.setState({ username: e })} value={this.state.username} placeholder='Username...' style={styles.textInput} keyboardType='email-address' />
+                        <TextInput onChangeText={(e) => this.setState({ password: e })} value={this.state.password} placeholder='Password...' style={styles.textInput} secureTextEntry={true} />
                     </View>
                     <View style={{ marginTop: 20, marginHorizontal: 16 }}>
                         <TouchableOpacity onPress={this.handleLogin} >
@@ -103,7 +88,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 8,
         padding: 15
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'center'
+    },
+    horizontal: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10
     }
+
 })
 
 export default Login

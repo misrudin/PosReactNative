@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native'
+import { View, ScrollView, TextInput, TouchableOpacity, Text, ActivityIndicator, StatusBar } from 'react-native'
 import ListCategory from '../Components/ListCategory'
 import { connect } from 'react-redux'
 import { getAllCategory, deleteCategory } from '../Publics/Redux/actions/category'
@@ -33,21 +33,30 @@ class Category extends Component {
         return (
 
             <View style={{ backgroundColor: 'white', marginBottom: 60 }}>
-                <View style={{ alignItems: 'center', paddingVertical: 10, backgroundColor: 'white', paddingHorizontal: 16, flexDirection: 'row' }}>
+                <StatusBar
+                    barStyle="dark-content"
+                    hidden={false}
+                    backgroundColor="#FFF"
+                    translucent={false}
+                    networkActivityIndicatorVisible={true}
+                />
+                <View style={{ borderBottomColor: '#ddd', borderBottomWidth: 1, alignItems: 'center', paddingVertical: 10, backgroundColor: 'white', paddingHorizontal: 16, flexDirection: 'row' }}>
                     <TextInput placeholder="I want to search..." style={{ flex: 1, backgroundColor: 'white', borderRadius: 20, borderWidth: 1, borderColor: "#ddd", paddingVertical: 5, paddingHorizontal: 20 }} />
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('InputCategory')}>
-                        <Text style={{ marginHorizontal: 20 }}>Add</Text>
+                        <Text style={{ marginHorizontal: 20, fontWeight: "bold", fontSize: 14, color: 'green' }}>Add</Text>
                     </TouchableOpacity>
                 </View>
                 <ScrollView style={{ backgroundColor: '#fff' }}>
                     {
-                        this.state.category ?
+                        !this.props.category.isPending ?
                             this.state.category.map(data => {
                                 return (
                                     <ListCategory key={data.id} data={data} onDelete={this.handleDelete} edit={this.showData} />
                                 )
                             }) : (
-                                <Text>Loading gaes...</Text>
+                                <View style={{ flex: 1, position: 'absolute', top: 50 }}>
+                                    <ActivityIndicator size="large" color="#0000ff" />
+                                </View>
                             )
                     }
                 </ScrollView>
