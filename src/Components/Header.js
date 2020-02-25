@@ -5,7 +5,7 @@ const Header = (props) => {
     return (
         <>
             <View style={{ flex: 1, position: "relative" }}>
-                <TextInput placeholder='I want to search ...' style={styles.search} />
+                <TextInput placeholder='I want to search ...' style={styles.search} onChangeText={(key) => props.onChange(key)} />
                 <Image source={require('../Assets/img/search.png')} style={{ position: 'absolute', top: 12, left: 12 }} />
             </View>
             <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: "center" }}>

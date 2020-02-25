@@ -6,8 +6,9 @@ const Content = (props) => {
         <>
             <View style={{ width: '50%', height: 250, padding: 6, position: 'relative' }} >
                 <View style={{ borderWidth: 1, borderColor: '#eee', flex: 1, backgroundColor: '#eee', borderRadius: 6, overflow: 'hidden', position: 'relative', shadowColor: '#eee', shadowOffset: { width: 2, height: 2 } }}>
-                    <TouchableOpacity>
-                        <Image source={{ uri: props.data.image }} style={{ width: '100%', height: '100%' }} />
+                    <TouchableOpacity onPress={() => props.onPress(props.data)}>
+                        
+                        <Image source={{ uri: props.data.image }} style={{ width: '100%', height: '100%',opacity:.6 }} />
                     </TouchableOpacity>
                 </View>
                 <Text style={{ textAlign: 'center' }}>{props.data.name}</Text>

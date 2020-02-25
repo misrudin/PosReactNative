@@ -9,8 +9,11 @@ import Acount from '../../Screens/Acount'
 import Cart from '../../Screens/Cart'
 import Loading from '../../Screens/Loading'
 import InputProduct from '../../Screens/InputProduct'
+import History from '../../Screens/History'
 import InputCategory from '../../Screens/InputCategory'
 import EditCategory from '../../Components/EditCategory'
+import EditProduct from '../../Components/EditProduct'
+import ChangePassword from '../../Components/ChangePassword'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack'
@@ -53,6 +56,16 @@ const MainNavigators = () => {
                     component={Category}
                     options={{
                         tabBarLabel: 'Category',
+                        tabBarIcon: ({ color, size }) => (
+                            <Image source={require('../../Assets/img/home.png')} style={{ width: 26, height: 26 }} />
+                        ),
+                    }}
+                />
+                <Tab.Screen
+                    name="History"
+                    component={History}
+                    options={{
+                        tabBarLabel: 'History',
                         tabBarIcon: ({ color, size }) => (
                             <Image source={require('../../Assets/img/home.png')} style={{ width: 26, height: 26 }} />
                         ),
@@ -129,8 +142,10 @@ export const SubNavigator = () => {
                 <Stack.Navigator initialRouteName="Auth">
                     <Stack.Screen name="Auth" component={AuthNavigator} options={{ headerShown: false }} />
                     <Stack.Screen name='InputProduct' component={InputProduct} options={{ headerTitle: 'Add Product' }} />
+                    <Stack.Screen name='EditProduct' component={EditProduct} options={{ headerTitle: 'Edit Product' }} />
                     <Stack.Screen name='InputCategory' component={InputCategory} options={{ headerTitle: 'Add Category' }} />
                     <Stack.Screen name='EditCategory' component={EditCategory} options={{ headerTitle: 'Edit Category' }} />
+                    <Stack.Screen name='ChangePassword' component={ChangePassword} options={{ headerTitle: 'Change Password' }} />
                     <Stack.Screen name="Cart" component={Cart} />
                 </Stack.Navigator>
             </NavigationContainer>

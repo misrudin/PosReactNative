@@ -24,16 +24,28 @@ export const addProduct = (fd) => {
         })
     }
 }
-// export const deleteProduct = (id) => {
-//     return {
-//         type: "DELETE_PRODUCT",
-//         payload: axios.delete(process.env.REACT_APP_URL + `product/${id}`, {
-//             headers: {
-//                 token: localStorage.getItem('Token')
-//             }
-//         })
-//     }
-// }
+
+export const filterProduct = (key) => {
+    console.log(key)
+    return {
+        type: "FIL_PRODUCT",
+        payload: axios.post(urls + `product/filter?keyword${key}`, {
+            headers: {
+                token: token
+            }
+        })
+    }
+}
+export const deleteProduct = (id) => {
+    return {
+        type: "DELETE_PRODUCT",
+        payload: axios.delete(urls + `product/${id}`, {
+            headers: {
+                token: token
+            }
+        })
+    }
+}
 // export const editProduct = (id, fd) => {
 //     return {
 //         type: "EDIT_PRODUCT",

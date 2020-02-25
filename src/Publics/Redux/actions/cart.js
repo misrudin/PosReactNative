@@ -23,9 +23,9 @@ export const getAllCart = () => {
 export const addProductToCart = (data) => {
     return {
         type: "ADD_CART",
-        payload: axios.post(process.env.REACT_APP_URL + 'cart', data, {
+        payload: axios.post(urls + 'cart', data, {
             headers: {
-                token: localStorage.getItem('Token')
+                token: token
             }
         })
     }

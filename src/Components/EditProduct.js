@@ -9,8 +9,6 @@ const options = {
     mediaType: 'photo',
     maxWidth: 1024,
     maxHeight: 1024,
-    noData: true,
-    cropping: true,
     storageOptions: {
         skipBackup: true,
         path: 'posApp',
@@ -18,18 +16,32 @@ const options = {
 };
 
 class InputProduct extends Component {
-    state = {
-        image: null,
-        name: '',
-        description: '',
-        stok: '',
-        price: '',
-        id_category: '',
-        imgSrc: []
+    constructor(props) {
+        super(props)
+        this.state = {
+            formProduct: {
+                image: null,
+                name: '',
+                description: '',
+                stok: '',
+                price: '',
+                id_category: ''
+            },
+            category: []
+        }
+    }
+
+
+    getCategory = async () => {
+        const category = this.props.category.categoryData
+        this.setState({
+            category
+        })
     }
 
     showImage = () => {
         ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
 
             if (response.didCancel) {
                 console.log('User cancelled image picker');
@@ -38,56 +50,80 @@ class InputProduct extends Component {
             } else {
                 const source = { uri: response.uri };
                 this.setState({
-                    image: source,
-                    imgSrc: response
+                    formProduct: { image: source, }
                 });
 
             }
         });
     }
 
-    handleSave = async () => {
-        const { name, description, stok, price, id_category, image, imgSrc } = this.state
+    handleSave = () => {
+        const { name, description, stok, price, id_category, image } = this.state.product
         let fd = new FormData()
+        fd.append('image', image, image.name)
         fd.append('name', name)
         fd.append('description', description)
         fd.append('stok', stok)
         fd.append('price', price)
         fd.append('id_category', id_category)
-        fd.append("image", {
-            uri: imgSrc.uri,
-            name: imgSrc.fileName,
-            type: imgSrc.type
-        })
-        await this.props.dispatch(addProduct(fd));
+        this.props.dispatch(addProduct(fd));
         this.props.navigation.navigate('Product')
     }
+
+    handleChange = (name, description, stok, price, id_category) => {
+        console.log(name)
+        // let newProduct = { ...this.state.formProduct };
+        // newProduct.name = name
+        // newProduct.description = description
+        // newProduct.stok = stok
+        // newProduct.price = price
+        // newProduct.id_category = id_category
+        // this.setState({
+        //     formProduct: newProduct
+        // })
+    }
+
+    componentDidMount = () => {
+        console.warn(this.props.dataProduct)
+        this.getCategory()
+        // let newData = { ...this.state.formProduct };
+        // newData.description = this.props.route.params.data.description
+        // newData.stok = this.props.route.params.data.stok
+        // newData.price = this.props.route.params.data.price
+        // newData.name = this.props.route.params.data.name
+        // newData.image = this.props.route.params.data.image
+        // newData.id = this.props.route.params.data.id
+        // this.setState({
+        //     formProduct: newData
+        // })
+    }
     render() {
+        const { name, description, stok, price, id_category, image } = this.state.formProduct
         return (
             <>
                 <ScrollView style={styles.container}>
                     <View style={styles.sectionInput}>
                         <Text style={{ color: '#020', fontWeight: 'bold', marginBottom: 5 }}>Name</Text>
                         <TextInput style={styles.txtInput}
-                            onChangeText={(e) => this.setState({ name: e })} value={this.state.name}
+                            value={name}
                         />
                     </View>
                     <View style={styles.sectionInput}>
                         <Text style={{ color: '#020', fontWeight: 'bold', marginBottom: 5 }}>Description</Text>
                         <TextInput style={styles.txtInput}
-                            onChangeText={(e) => this.setState({ description: e })} value={this.state.description}
+                            onChangeText={(description) => this.handleChange(description)} value={description}
                         />
                     </View>
                     <View style={styles.sectionInput}>
                         <Text style={{ color: '#020', fontWeight: 'bold', marginBottom: 5 }}>Stok</Text>
                         <TextInput style={styles.txtInput}
-                            onChangeText={(e) => this.setState({ stok: e })} value={this.state.stok}
+                            onChangeText={(stok) => this.handleChange(stok)} value={stok}
                         />
                     </View>
                     <View style={styles.sectionInput}>
                         <Text style={{ color: '#020', fontWeight: 'bold', marginBottom: 5 }}>Price</Text>
                         <TextInput style={styles.txtInput}
-                            onChangeText={(e) => this.setState({ price: e })} value={this.state.price}
+                            onChangeText={(price) => this.handleChange(price)} value={price}
                         />
                     </View>
 
@@ -95,13 +131,13 @@ class InputProduct extends Component {
                         <Text style={{ color: '#020', fontWeight: 'bold', marginBottom: 5 }}>Category</Text>
                         <View style={{ borderColor: '#ddd', borderRadius: 8, borderWidth: 1, backgroundColor: '#fff' }}>
                             <Picker style={{ color: '#999' }}
-                                selectedValue={this.state.id_category}
+                                selectedValue={id_category}
                                 onValueChange={(itemValue, itemIndex) =>
-                                    this.setState({ id_category: itemValue })
+                                    this.handleChange(itemValue)
                                 }
                             >
                                 {
-                                    this.props.route.params.data.map(category => {
+                                    this.state.category.map(category => {
                                         return (
                                             <Picker.Item key={category.id} label={category.nama_category} value={category.id} />
                                         )
@@ -113,7 +149,7 @@ class InputProduct extends Component {
 
                     <View style={styles.sectionInput}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image source={this.state.image} style={{ width: 100, height: 100, borderWidth: 1, borderColor: '#ddd' }} />
+                            <Image source={image} style={{ width: 100, height: 100, borderWidth: 1, borderColor: '#ddd' }} />
                             <TouchableOpacity style={styles.btn} onPress={() => this.showImage()} >
                                 <Text style={{ color: 'white', fontWeight: 'bold' }}>Chose Image</Text>
                             </TouchableOpacity>

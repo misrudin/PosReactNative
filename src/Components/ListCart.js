@@ -6,18 +6,18 @@ const ListCart = (props) => {
         <View style={styles.container}>
             <View style={styles.sectionleft}>
                 <View>
-                    <Image style={styles.img} />
+                    <Image source={{ uri: props.data.image }} style={styles.img} />
                 </View>
                 <View >
                     <View style={{ flexDirection: "column", justifyContent: 'flex-start', marginLeft: 10 }}>
-                        <Text style={{ color: '#0000ff', fontWeight: 'bold', fontSize: 16 }} >{props.name}</Text>
-                        <Text style={{ color: "#acacac" }}>Rp. {props.price}</Text>
+                        <Text style={{ color: '#0000ff', fontWeight: 'bold', fontSize: 16 }} >{props.data.name}</Text>
+                        <Text style={{ color: "#acacac" }}>Rp. {props.data.price}</Text>
                     </View>
                     <View style={{ flexDirection: "row", marginLeft: 30, alignItems: 'center' }}>
                         <TouchableOpacity>
                             <Text style={styles.reducer}>-</Text>
                         </TouchableOpacity>
-                        <Text style={{ color: '#999', marginRight: 30 }}>0</Text>
+                        <Text style={{ color: '#999', marginRight: 30 }}>{props.data.qty}</Text>
                         <TouchableOpacity>
                             <Text style={styles.reducer}>+</Text>
                         </TouchableOpacity>

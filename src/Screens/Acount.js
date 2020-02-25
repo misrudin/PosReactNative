@@ -25,8 +25,8 @@ class Acount extends Component {
 					<Text style={{ fontSize: 12, color: 'white', marginVertical: 5 }}>My Role</Text>
 				</View>
 				<View style={{ flex: 1, width: '100%', marginTop: 10, alignItems: 'center' }}>
-					<TouchableOpacity style={{ backgroundColor: 'salmon', width: '50%', padding: 10, borderRadius: 8, marginTop: 20 }}>
-						<Text style={{ textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: 16 }}>Change Profile</Text>
+					<TouchableOpacity onPress={() => this.props.navigation.navigate('ChangePassword')} style={{ backgroundColor: 'salmon', width: '50%', padding: 10, borderRadius: 8, marginTop: 20 }}>
+						<Text style={{ textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: 16 }}>Change Password</Text>
 					</TouchableOpacity>
 					<TouchableOpacity onPress={() => this.handleLogout()} style={{ backgroundColor: 'salmon', width: '50%', padding: 10, borderRadius: 8, marginTop: 20 }}>
 						<Text style={{ textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: 16 }}>Logout</Text>

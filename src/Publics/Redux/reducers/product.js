@@ -137,6 +137,28 @@ const productReducer = (state = initialValue, action) => {
                 productData: action.payload.data
             };
 
+        case "FIL_PENDING":
+            return {
+                ...state,
+                isPending: true,
+                isRejected: false,
+                isFulfilled: false
+            };
+        case "FIL_REJECTED":
+            return {
+                ...state,
+                isPending: false,
+                isRejected: true,
+                errMsg: action.payload.data
+            };
+        case "FIL_FULFILLED":
+            return {
+                ...state,
+                isPending: false,
+                isFulfilled: true,
+                productData: action.payload.data.result
+            };
+
         default:
             return state;
     }

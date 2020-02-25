@@ -6,7 +6,13 @@ import { getAllCart } from '../Publics/Redux/actions/cart'
 
 class Cart extends Component {
     state = {
-        cart: []
+        cart: [],
+        formCheckOut: {
+            faktur: '',
+            id_user: '',
+            qty: '',
+            total: ''
+        },
     }
 
 
@@ -15,6 +21,23 @@ class Cart extends Component {
         this.setState({
             cart: this.props.cart.cartData
         })
+    };
+
+    okeCheckout = () => {
+        const data = this.state.formCheckOut
+        this.props.dispatch(checkOutAll(data))
+    }
+
+    handleCheckout = () => {
+        const newCheckOut = { ...this.state.formCheckOut }
+        newCheckOut.faktur = new Date().getTime()
+        newCheckOut.id_user = 10
+        newCheckOut.qty = this.state.cart.length
+        newCheckOut.total = 10000
+        this.setState({
+            formCheckOut: newCheckOut
+        })
+        this.okeCheckout()
     }
 
     componentDidMount() {
@@ -22,7 +45,6 @@ class Cart extends Component {
     }
 
     render() {
-        console.warn(this.state.cart)
         return (
             <View style={{ backgroundColor: 'white', flex: 1 }}>
                 <ScrollView style={{ backgroundColor: '#FFF', flex: 1 }}>
@@ -41,10 +63,10 @@ class Cart extends Component {
                     }
                 </ScrollView>
                 <View style={styles.foot}>
-                    <TouchableOpacity style={styles.footer}>
+                    <TouchableOpacity style={styles.footer} onPress={() => this.handleCheckout}>
                         <Text style={{ color: 'green', fontSize: 'bold', fontSize: 16 }}>Checkout</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.footer}>
+                    <TouchableOpacity style={styles.footer} onPress={() => this.props.navigation.navigate('Home')}>
                         <Text style={{ color: 'salmon', fontSize: 'bold', fontSize: 16 }}>Cancel</Text>
                     </TouchableOpacity>
                 </View>

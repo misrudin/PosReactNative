@@ -49,12 +49,12 @@ const productReducer = (state = initialValue, action) => {
                 errMsg: action.payload.data
             };
         case "ADD_CATEGORY_FULFILLED":
-            state.categoryData.push(action.payload.data.result)
+            // state.categoryData.push(action.payload.data.result)
             return {
                 ...state,
                 isPending: false,
                 isFulfilled: true,
-                categoryData: state.categoryData
+                categoryData: action.payload.data.result
             };
 
         //delete category
@@ -73,13 +73,13 @@ const productReducer = (state = initialValue, action) => {
                 errMsg: action.payload.data
             };
         case "DELETE_CATEGORY_FULFILLED":
-            const index = state.categoryData.find(category => category.id === action.id)
+            // const index = state.categoryData.find(category => category.id === action.id)
             console.log(action.id)
             return {
                 ...state,
                 isPending: false,
                 isFulfilled: true,
-                categoryData: state.categoryData
+                categoryData: action.payload.data.result
             };
 
         // edit category
@@ -102,7 +102,7 @@ const productReducer = (state = initialValue, action) => {
                 ...state,
                 isPending: false,
                 isFulfilled: true,
-                categoryData: state.categoryData
+                categoryData: action.payload.data.result
             };
 
         default:

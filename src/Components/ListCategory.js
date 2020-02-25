@@ -2,7 +2,6 @@ import React from 'react'
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native'
 
 const ListCategory = (props) => {
-    console.log(props)
     return (
         <View style={styles.container}>
             <View style={styles.sectionleft}>
