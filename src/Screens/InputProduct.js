@@ -25,7 +25,7 @@ class InputProduct extends Component {
         stok: '',
         price: '',
         id_category: '',
-        imgSrc: []
+        imgSrc: null
     }
 
     showImage = () => {
@@ -47,7 +47,7 @@ class InputProduct extends Component {
     }
 
     handleSave = async () => {
-        const { name, description, stok, price, id_category, image, imgSrc } = this.state
+        const { name, description, stok, price, id_category, imgSrc } = this.state
         let fd = new FormData()
         fd.append('name', name)
         fd.append('description', description)
@@ -59,6 +59,7 @@ class InputProduct extends Component {
             name: imgSrc.fileName,
             type: imgSrc.type
         })
+
         await this.props.dispatch(addProduct(fd));
         this.props.navigation.navigate('Product')
     }
@@ -101,7 +102,7 @@ class InputProduct extends Component {
                                 }
                             >
                                 {
-                                    this.props.route.params.data.map(category => {
+                                    this.props.category.categoryData.map(category => {
                                         return (
                                             <Picker.Item key={category.id} label={category.nama_category} value={category.id} />
                                         )

@@ -10,7 +10,7 @@ const authReducer = (state = initialValue, action) => {
                 ...state,
                 userData: state.userData + action.payload
             }
-        case 'TOKEN':
+        case 'SAVE_TOKEN':
             return {
                 ...state,
                 token: action.payload

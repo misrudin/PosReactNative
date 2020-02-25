@@ -1,7 +1,9 @@
 import axios from 'axios'
 
 const urls = "http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/"
+
 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc'
+
 
 
 export const getAllProduct = () => {
@@ -26,7 +28,6 @@ export const addProduct = (fd) => {
 }
 
 export const filterProduct = (key) => {
-    console.log(key)
     return {
         type: "FIL_PRODUCT",
         payload: axios.post(urls + `product/filter?keyword${key}`, {
@@ -46,26 +47,27 @@ export const deleteProduct = (id) => {
         })
     }
 }
-// export const editProduct = (id, fd) => {
-//     return {
-//         type: "EDIT_PRODUCT",
-//         payload: axios.patch(process.env.REACT_APP_URL + `product/${id}`, fd, {
-//             headers: {
-//                 token: localStorage.getItem('Token')
-//             }
-//         })
-//     }
-// }
 
-// export const pagination = (page, category, keyword) => {
-//     return {
-//         type: "PAGE",
-//         payload: axios.get(process.env.REACT_APP_URL + `product?page=${page}&keyword=${keyword}&category=${category}`, {
-//             headers: {
-//                 token: localStorage.getItem('Token')
-//             }
-//         })
-//     }
-// }
+export const editProduct = (id, fd) => {
+    return {
+        type: "EDIT_PRODUCT",
+        payload: axios.patch(urls + `product/${id}`, fd, {
+            headers: {
+                token: token
+            }
+        })
+    }
+}
+
+export const pagination = (page, category, keyword) => {
+    return {
+        type: "PAGE",
+        payload: axios.get(urls + `product?page=${page}&keyword=${keyword}&category=${category}`, {
+            headers: {
+                token: token
+            }
+        })
+    }
+}
 
 

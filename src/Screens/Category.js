@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, TextInput, TouchableOpacity, Text, ActivityIndicator, StatusBar } from 'react-native'
+import { View, ScrollView, TextInput, TouchableOpacity, Text, ActivityIndicator, StatusBar, Image } from 'react-native'
 import ListCategory from '../Components/ListCategory'
 import { connect } from 'react-redux'
 import { deleteCategory, getAllCategory } from '../Publics/Redux/actions/category'
@@ -21,8 +21,7 @@ class Category extends Component {
         }, 500)
     }
 
-    getCategory = async () => {
-        await this.props.dispatch(getAllCategory())
+    getCategory = () => {
         const category = this.props.category.categoryData
         let dataAfterFilter = category.filter((category) => {
             return category.nama_category.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1;
@@ -52,34 +51,29 @@ class Category extends Component {
 
             <View style={{ backgroundColor: 'white', marginBottom: 60 }}>
                 <StatusBar
-                    barStyle="dark-content"
+                    barStyle="light-content"
                     hidden={false}
-                    backgroundColor="#FFF"
+                    backgroundColor="#3f026b"
                     translucent={false}
                     networkActivityIndicatorVisible={true}
                 />
-                <View style={{ borderBottomColor: '#ddd', borderBottomWidth: 1, alignItems: 'center', paddingVertical: 10, backgroundColor: 'white', paddingHorizontal: 16, flexDirection: 'row' }}>
-                    <TextInput onChangeText={(key) => this.onSearch(key)} placeholder="I want to search..." style={{ flex: 1, backgroundColor: 'white', borderRadius: 20, borderWidth: 1, borderColor: "#ddd", paddingVertical: 5, paddingHorizontal: 20 }} />
+                <View style={{ alignItems: 'center', paddingVertical: 10, backgroundColor: '#3f026b', paddingHorizontal: 16, flexDirection: 'row' }}>
+                    <TextInput onChangeText={(key) => this.onSearch(key)} placeholder="I want to search..." style={{ flex: 1, backgroundColor: '#eee', borderRadius: 20, borderWidth: 1, borderColor: "#ddd", paddingVertical: 5, paddingHorizontal: 20, paddingLeft: 40 }} />
+                    <Image source={require('../Assets/img/search.png')} style={{ position: 'absolute', top: 22, left: 28 }} />
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('InputCategory')}>
-                        <Text style={{ marginHorizontal: 20, fontWeight: "bold", fontSize: 14, color: 'green' }}>Add</Text>
+                        <Text style={{ marginHorizontal: 20, fontWeight: "bold", fontSize: 14, color: '#F4A501' }}>Add</Text>
                     </TouchableOpacity>
                 </View>
-                <ScrollView style={{ backgroundColor: '#eee' }}>
+                <ScrollView style={{ backgroundColor: '#fff', }}>
                     {
                         !this.props.category.isPending && !this.state.loading ?
-                            this.state.category.length < 1 ? (
-                                <View style={{ flex: 1, backgroundColor: '#eee', marginTop: '50%' }}>
+                            this.state.category.map(data => {
+                                return (
+                                    <ListCategory key={data.id} data={data} onDelete={this.handleDelete} edit={this.showData} />
+                                )
+                            }) : (
+                                <View style={{ flex: 1, backgroundColor: '#fff', marginTop: '50%' }}>
                                     <ActivityIndicator size="large" color="#ff33ff" />
-                                    <Text style={{ textAlign: 'center', color: '#999', marginTop: 10 }}>Result Not Found !</Text>
-                                </View>
-                            ) :
-                                this.state.category.map(data => {
-                                    return (
-                                        <ListCategory key={data.id} data={data} onDelete={this.handleDelete} edit={this.showData} />
-                                    )
-                                }) : (
-                                <View style={{ flex: 1, backgroundColor: '#eee', marginTop: '50%' }}>
-                                    <ActivityIndicator size="large" color="#0000ff" />
                                 </View>
                             )
                     }

@@ -1,10 +1,11 @@
 import React from 'react'
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native'
+import { View, Text, ActivityIndicator, StyleSheet, StatusBar } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux'
 import { getAllProduct } from '../Publics/Redux/actions/product'
 import { getAllCart } from '../Publics/Redux/actions/cart'
 import { getAllCategory } from '../Publics/Redux/actions/category'
+import { saveToken } from '../Publics/Redux/actions/token'
 
 class Loading extends React.Component {
     state = {
@@ -30,6 +31,7 @@ class Loading extends React.Component {
         this.getToken()
         setTimeout(() => {
             if (this.state.tokenData) {
+                this.props.dispatch(saveToken(this.state.tokenData));
                 this.props.navigation.navigate('Home')
             } else {
                 this.props.navigation.navigate('Login')
@@ -38,9 +40,16 @@ class Loading extends React.Component {
     }
     render() {
         return (
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, backgroundColor: '#085366' }}>
+                <StatusBar
+                    barStyle="light-content"
+                    hidden={false}
+                    backgroundColor="#085366"
+                    translucent={false}
+                    networkActivityIndicatorVisible={true}
+                />
                 <View style={[styles.container, styles.horizontal]}>
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color="#ff33ff" />
                 </View>
             </View >
         )

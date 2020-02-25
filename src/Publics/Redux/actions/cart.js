@@ -34,9 +34,9 @@ export const addProductToCart = (data) => {
 export const checkOutAll = (data) => {
     return {
         type: "CHECKOUT",
-        payload: axios.post(process.env.REACT_APP_URL + 'cart/checkout', data, {
+        payload: axios.post(urls + 'cart/checkout', data, {
             headers: {
-                token: localStorage.getItem('Token')
+                token: token
             }
         })
     }
@@ -45,9 +45,9 @@ export const checkOutAll = (data) => {
 export const deleteAll = () => {
     return {
         type: "DELETEALL",
-        payload: axios.delete(process.env.REACT_APP_URL + 'cart/all', {
+        payload: axios.delete(urls + 'cart/all', {
             headers: {
-                token: localStorage.getItem('Token')
+                token: token
             }
         })
     }
@@ -56,9 +56,9 @@ export const deleteAll = () => {
 export const deleteCart = (id_cart) => {
     return {
         type: "DELETECART",
-        payload: axios.delete(process.env.REACT_APP_URL + `cart?id_cart=${id_cart}`, {
+        payload: axios.delete(urls + `cart?id_cart=${id_cart}`, {
             headers: {
-                token: localStorage.getItem('Token')
+                token: token
             }
         })
     }
@@ -78,9 +78,9 @@ export const getDetail = (faktur) => {
 export const addQty = (id_cart) => {
     return {
         type: "ADDQTY",
-        payload: axios.patch(process.env.REACT_APP_URL + `cart/add/${id_cart}`, {
+        payload: axios.patch(urls + `cart/add/${id_cart}`, {
             headers: {
-                token: localStorage.getItem('Token')
+                token: token
             }
         })
     }
@@ -88,9 +88,9 @@ export const addQty = (id_cart) => {
 export const minQty = (id_cart) => {
     return {
         type: "MINQTY",
-        payload: axios.patch(process.env.REACT_APP_URL + `cart/min/${id_cart}`, {
+        payload: axios.patch(urls + `cart/min/${id_cart}`, {
             headers: {
-                token: localStorage.getItem('Token')
+                token: token
             }
         })
     }

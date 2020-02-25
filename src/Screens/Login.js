@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, StatusBar } from 'react-native'
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -45,14 +45,21 @@ class Login extends Component {
 
     render() {
         return (
-            <ScrollView style={{ flex: 1, backgroundColor: 'white' }}>
-                <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center' }}>
-                    <View style={{ height: 400, backgroundColor: 'grey' }}>
-                        <Text>nantinya gambar</Text>
+            <ScrollView style={{ flex: 1, backgroundColor: '#085366' }}>
+                <StatusBar
+                    // barStyle="dark-content"
+                    hidden={false}
+                    backgroundColor="#085366"
+                    translucent={false}
+                    networkActivityIndicatorVisible={true}
+                />
+                <View style={{ flex: 1, backgroundColor: '#085366', justifyContent: 'center' }}>
+                    <View style={{ height: 400, backgroundColor: '#085366' }}>
+                        {/* <Text>nantinya gambar</Text> */}
                     </View>
-                    <View style={{ justifyContent: 'center', alignItems: "center" }} >
+                    {/* <View style={{ justifyContent: 'center', alignItems: "center" }} >
                         <Text style={{ fontSize: 30, fontWeight: "bold", color: 'grey' }}>Login</Text>
-                    </View>
+                    </View> */}
                     <View style={{ paddingHorizontal: 16 }}>
                         <TextInput onChangeText={(e) => this.setState({ username: e })} value={this.state.username} placeholder='Username...' style={styles.textInput} keyboardType='email-address' />
                         <TextInput onChangeText={(e) => this.setState({ password: e })} value={this.state.password} placeholder='Password...' style={styles.textInput} secureTextEntry={true} />
@@ -62,7 +69,7 @@ class Login extends Component {
                             <View style={styles.btn}><Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Login</Text></View>
                         </TouchableOpacity>
                         <TouchableOpacity style={{ marginTop: 20, alignItems: "center" }} onPress={() => { this.props.navigation.navigate('Register') }} >
-                            <Text style={{ color: 'green', fontWeight: 'bold', fontSize: 16 }}>Register</Text>
+                            <Text style={{ color: '#F4A501', fontWeight: 'bold', fontSize: 16 }}>Register</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -73,14 +80,15 @@ class Login extends Component {
 
 const styles = StyleSheet.create({
     textInput: {
-        backgroundColor: 'white',
+        backgroundColor: '#eee',
         paddingVertical: 10,
         borderWidth: 1,
         color: "grey",
         borderRadius: 4,
         marginTop: 10,
         paddingLeft: 40,
-        paddingRight: 20
+        paddingRight: 20,
+        borderColor: '#222526'
     },
     btn: {
         backgroundColor: "#F4A501",

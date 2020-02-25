@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native'
 import axios from 'axios'
 
 class Register extends Component {
@@ -37,14 +37,21 @@ class Register extends Component {
 
     render() {
         return (
-            <ScrollView style={{ flex: 1, backgroundColor: 'white' }}>
-                <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center' }}>
-                    <View style={{ height: 400, backgroundColor: 'grey' }}>
-                        <Text>nantinya gambar Juga</Text>
+            <ScrollView style={{ flex: 1, backgroundColor: '#085366' }}>
+                <StatusBar
+                    // barStyle="dark-content"
+                    hidden={false}
+                    backgroundColor="#085366"
+                    translucent={false}
+                    networkActivityIndicatorVisible={true}
+                />
+                <View style={{ flex: 1, backgroundColor: '#085366', justifyContent: 'center' }}>
+                    <View style={{ height: 400, backgroundColor: '#085366' }}>
+                        {/* <Text>nantinya gambar Juga</Text> */}
                     </View>
-                    <View style={{ justifyContent: 'center', alignItems: "center" }} >
+                    {/* <View style={{ justifyContent: 'center', alignItems: "center" }} >
                         <Text style={{ fontSize: 30, fontWeight: "bold", color: 'grey' }}>Register</Text>
-                    </View>
+                    </View> */}
                     <View style={{ paddingHorizontal: 16 }}>
                         <TextInput onChangeText={(e) => this.setState({ username: e })} value={this.state.username} placeholder='Username...' style={styles.textInput} />
                         <TextInput onChangeText={(e) => this.setState({ password: e })} value={this.state.password} placeholder='Password...' style={styles.textInput} />
@@ -55,7 +62,7 @@ class Register extends Component {
                             <View style={styles.btn}><Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Register</Text></View>
                         </TouchableOpacity>
                         <TouchableOpacity style={{ marginTop: 20, alignItems: "center" }}>
-                            <Text style={{ color: 'green', fontWeight: 'bold', fontSize: 16 }} onPress={() => { this.props.navigation.navigate('Login') }}>Back To Login</Text>
+                            <Text style={{ color: '#F4A501', fontWeight: 'bold', fontSize: 16 }} onPress={() => { this.props.navigation.navigate('Login') }}>Back To Login</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -73,7 +80,8 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         marginTop: 10,
         paddingLeft: 40,
-        paddingRight: 20
+        paddingRight: 20,
+        borderColor: '#222526'
     },
     btn: {
         backgroundColor: "#F4A501",

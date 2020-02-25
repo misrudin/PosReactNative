@@ -15,7 +15,7 @@ class Acount extends Component {
 	render() {
 		return (
 
-			<ScrollView style={{ paddingHorizontal: 16, flex: 1 }}>
+			<ScrollView style={{ paddingHorizontal: 16, flex: 1, backgroundColor: '#3f026b' }}>
 				<View style={{ justifyContent: 'center', alignItems: 'center', padding: 10 }}>
 					<Text style={{ fontSize: 20, color: '#acacac' }}>My Acount</Text>
 				</View>

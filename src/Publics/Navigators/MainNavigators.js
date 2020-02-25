@@ -28,7 +28,9 @@ const MainNavigators = () => {
                 backBehavior="none"
                 tabBarOptions={{
                     activeTintColor: '#F4A501',
-                    activeBackgroundColor: 'grey',
+                    activeBackgroundColor: '#3f026b',
+                    inactiveTintColor: '#3f026b',
+                    inactiveBackgroundColor: '#fff'
                 }}
             >
                 <Tab.Screen
@@ -95,7 +97,7 @@ class AuthNavigator extends Component {
                 backBehavior="none"
                 tabBarOptions={{
                     activeTintColor: '#F4A501',
-                    activeBackgroundColor: 'grey',
+                    activeBackgroundColor: '#007a3d',
                 }}
             >
                 <Tab.Screen
@@ -139,7 +141,7 @@ export const SubNavigator = () => {
     return (
         <>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Auth">
+                <Stack.Navigator initialRouteName="Auth" >
                     <Stack.Screen name="Auth" component={AuthNavigator} options={{ headerShown: false }} />
                     <Stack.Screen name='InputProduct' component={InputProduct} options={{ headerTitle: 'Add Product' }} />
                     <Stack.Screen name='EditProduct' component={EditProduct} options={{ headerTitle: 'Edit Product' }} />

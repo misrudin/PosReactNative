@@ -107,7 +107,7 @@ const cartReducer = (state = initialValue, action) => {
                 ...state,
                 isPending: false,
                 isFulfilled: true,
-                cartData: state.cartData
+                cartData: action.payload.data.result
             };
 
         //detail cart
@@ -199,7 +199,7 @@ const cartReducer = (state = initialValue, action) => {
                 ...state,
                 isPending: false,
                 isFulfilled: true,
-                cartData: state.cartData
+                cartData: action.payload.data.result
             };
         default:
             return state;
