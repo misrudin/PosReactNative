@@ -238,7 +238,7 @@ class InputProduct extends Component {
               <TouchableOpacity
                 style={styles.btn}
                 onPress={() => this.showImage()}>
-                <Text style={{color: 'white', fontWeight: 'bold'}}>
+                <Text style={{color: '#3f026b', fontWeight: 'bold'}}>
                   Chose Image
                 </Text>
               </TouchableOpacity>
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   sectionBtn: {
-    marginTop: 40,
+    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'center',
   },
@@ -299,7 +299,8 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   btn: {
-    backgroundColor: '#F4A501',
+    borderColor: '#3f026b',
+    borderWidth: 2,
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 10,

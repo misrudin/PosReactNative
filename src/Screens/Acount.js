@@ -69,7 +69,9 @@ class Acount extends Component {
         </View>
         <View
           style={{
-            backgroundColor: 'salmon',
+            borderColor: 'salmon',
+            borderWidth: 2,
+            borderRadius: 5,
             flex: 1,
             width: '100%',
             marginTop: 10,

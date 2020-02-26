@@ -77,11 +77,25 @@ class Cart extends Component {
 
   okeCheckout = async () => {
     const data = this.state.formCheckOut;
-    await this.props.dispatch(checkOutAll(data));
-    await this.sendQty();
-    this.setState({
-      show: true,
+    await this.props.dispatch(checkOutAll(data)).then(() => {
+      Alert.alert(
+        'Congratulation',
+        'Checkout Success',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => this.props.navigation.navigate('Home')},
+        ],
+        {cancelable: true},
+      );
     });
+    await this.sendQty();
+
+    // this.setState({
+    //   show: true,
+    // });
   };
 
   handleCheckout = () => {
