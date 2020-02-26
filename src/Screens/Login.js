@@ -18,7 +18,7 @@ class Login extends Component {
     password: '',
     msg: '',
     token: '',
-    show: false,
+    loading: false,
     tokenData: '',
   };
 
@@ -39,22 +39,43 @@ class Login extends Component {
       username: this.state.username,
       password: this.state.password,
     };
-    axios
-      .post(
-        `http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/auth/login`,
-        data,
-      )
-      .then(res => {
-        if (!res.data.token) {
-          this.setState({
-            msg: res.data.msg,
-            show: true,
-          });
-        } else {
-          this.saveToken(res.data);
-          this.props.navigation.navigate('Home');
-        }
+    if (data.username && data.password) {
+      this.setState({
+        loading: true,
       });
+      axios
+        .post(
+          `http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/auth/login`,
+          data,
+        )
+        .then(res => {
+          if (!res.data.token) {
+            this.setState({
+              msg: res.data.msg,
+              loading: false,
+            });
+          } else {
+            this.saveToken(res.data);
+            this.setState({
+              loading: false,
+            });
+            this.clear();
+            this.props.navigation.navigate('Home');
+          }
+        });
+    } else {
+      this.setState({
+        msg: 'Enter Username and Password !',
+      });
+    }
+  };
+
+  clear = () => {
+    this.setState({
+      username: '',
+      password: '',
+      msg: '',
+    });
   };
 
   render() {
@@ -73,12 +94,15 @@ class Login extends Component {
             backgroundColor: '#085366',
             justifyContent: 'center',
           }}>
-          <View style={{height: 400, backgroundColor: '#085366'}}>
+          <View style={{height: 300, backgroundColor: '#085366'}}>
             {/* <Text>nantinya gambar</Text> */}
           </View>
           {/* <View style={{ justifyContent: 'center', alignItems: "center" }} >
                         <Text style={{ fontSize: 30, fontWeight: "bold", color: 'grey' }}>Login</Text>
                     </View> */}
+          <Text style={{textAlign: 'center', color: 'salmon', fontSize: 14}}>
+            {this.state.msg}
+          </Text>
           <View style={{paddingHorizontal: 16}}>
             <TextInput
               onChangeText={e => this.setState({username: e})}
@@ -96,14 +120,18 @@ class Login extends Component {
             />
           </View>
           <View style={{marginTop: 20, marginHorizontal: 16}}>
-            <TouchableOpacity onPress={this.handleLogin}>
-              <View style={styles.btn}>
-                <Text
-                  style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>
-                  Login
-                </Text>
-              </View>
-            </TouchableOpacity>
+            {this.state.loading ? (
+              <ActivityIndicator size="large" color="#ff33ff" />
+            ) : (
+              <TouchableOpacity onPress={this.handleLogin}>
+                <View style={styles.btn}>
+                  <Text
+                    style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>
+                    Login
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={{marginTop: 20, alignItems: 'center'}}
               onPress={() => {

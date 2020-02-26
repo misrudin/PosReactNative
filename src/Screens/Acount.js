@@ -1,14 +1,63 @@
 import React, {Component} from 'react';
-import {Text, View, TouchableOpacity, ScrollView} from 'react-native';
+import {Text, View, TouchableOpacity, ScrollView, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
+const urls = 'http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/';
+
+const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';
 
 class Acount extends Component {
-  state = {};
+  state = {
+    username: '',
+    id_user: '',
+  };
+
+  logout = () => {
+    Alert.alert(
+      'Sure ?',
+      'Do you want to logout',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => this.handleLogout()},
+      ],
+      {cancelable: false},
+    );
+  };
 
   handleLogout = async () => {
     await AsyncStorage.removeItem('Token');
     await AsyncStorage.removeItem('id');
     this.props.navigation.navigate('Logout');
+  };
+  getToken = async () => {
+    await AsyncStorage.getItem('id', (err, id) => {
+      this.setState({
+        id_user: id,
+      });
+    });
+  };
+  componentDidMount = async () => {
+    await this.getToken();
+    await this.getUsername();
+  };
+
+  getUsername = async () => {
+    const id = this.state.id_user;
+    await axios
+      .get(urls + `auth/user/${id}`, {
+        headers: {
+          token: token,
+        },
+      })
+      .then(res => {
+        this.setState({
+          username: res.data[0].username,
+        });
+      });
   };
   render() {
     return (
@@ -16,7 +65,7 @@ class Acount extends Component {
         style={{paddingHorizontal: 16, flex: 1, backgroundColor: '#3f026b'}}>
         <View
           style={{justifyContent: 'center', alignItems: 'center', padding: 10}}>
-          <Text style={{fontSize: 20, color: '#acacac'}}>My Acount</Text>
+          <Text style={{fontSize: 27, color: '#acacac'}}>My Acount</Text>
         </View>
         <View
           style={{
@@ -28,29 +77,29 @@ class Acount extends Component {
           }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: 'bold',
               color: 'white',
               marginVertical: 10,
             }}>
-            God Morning !
+            Hello !
           </Text>
           <Text
             style={{
-              fontSize: 16,
+              fontSize: 25,
               fontWeight: 'bold',
               color: 'white',
               marginVertical: 10,
             }}>
-            My USername
+            {this.state.username}
           </Text>
-          <Text style={{fontSize: 12, color: 'white', marginVertical: 5}}>
+          {/* <Text style={{fontSize: 12, color: 'white', marginVertical: 5}}>
             My Role
-          </Text>
+          </Text> */}
         </View>
         <View
           style={{flex: 1, width: '100%', marginTop: 10, alignItems: 'center'}}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => this.props.navigation.navigate('ChangePassword')}
             style={{
               backgroundColor: 'salmon',
@@ -68,9 +117,9 @@ class Acount extends Component {
               }}>
               Change Password
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
-            onPress={() => this.handleLogout()}
+            onPress={() => this.logout()}
             style={{
               backgroundColor: 'salmon',
               width: '50%',

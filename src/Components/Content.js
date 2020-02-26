@@ -42,7 +42,7 @@ const Content = props => {
             </Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => props.edit(props.data)}>
               <Icon name="edit" size={20} color="#F4A501" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => props.onDelete(props.data.id)}>

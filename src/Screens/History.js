@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   historyArea: {
-    backgroundColor: '#441874',
+    backgroundColor: '#fff',
     marginTop: 15,
     flex: 1,
     padding: 16,
@@ -223,12 +223,49 @@ const styles = StyleSheet.create({
 
 export const DataHistory = props => {
   return (
-    <View style={{flexDirection: 'row'}}>
-      <Text style={{marginRight: 10}}>{props.data.faktur}</Text>
-      <Text style={{marginRight: 10}}>{props.data.date_pay}</Text>
-      <Text style={{marginRight: 10}}>{props.data.username}</Text>
-      <Text style={{marginRight: 10}}>{props.data.qty}</Text>
-      <Text>{props.data.total}</Text>
+    <View style={myStyle.parent}>
+      <View style={myStyle.row}>
+        <Text style={myStyle.left}>{props.data.date_pay}</Text>
+        <Text style={myStyle.left}>{props.data.faktur}</Text>
+        <Text style={myStyle.left}>{props.data.username}</Text>
+      </View>
+      <View style={myStyle.row}>
+        <Text style={myStyle.center}>{props.data.qty} item</Text>
+      </View>
+      <View style={myStyle.row}>
+        <Text style={myStyle.right}>Rp. {props.data.total}</Text>
+      </View>
     </View>
   );
 };
+
+const myStyle = StyleSheet.create({
+  parent: {
+    flexDirection: 'row',
+  },
+  row: {
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    flex: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3f026b',
+  },
+  left: {
+    color: '#3f026b',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  center: {
+    color: '#3f026b',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  right: {
+    color: '#3f026b',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});

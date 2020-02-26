@@ -178,11 +178,6 @@ class Home extends Component {
     }
   };
 
-  deleteOk = async id => {
-    await this.props.dispatch(deleteProduct(id));
-    await this.search();
-  };
-
   handleDelete = id => {
     Alert.alert(
       'Sure?',
@@ -196,6 +191,16 @@ class Home extends Component {
       ],
       {cancelable: false},
     );
+  };
+
+  deleteOk = async id => {
+    await this.props.dispatch(deleteProduct(id)).then(() => {
+      this.getProductPage();
+    });
+  };
+
+  showData = data => {
+    this.props.navigation.navigate('EditProduct', {data: data});
   };
 
   render() {

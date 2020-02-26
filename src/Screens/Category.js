@@ -4,10 +4,10 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Text,
   ActivityIndicator,
   StatusBar,
-  Image,
+  RefreshControl,
+  Alert,
 } from 'react-native';
 import ListCategory from '../Components/ListCategory';
 import {connect} from 'react-redux';
@@ -28,6 +28,7 @@ class Category extends Component {
     category: [],
     loading: false,
     search: '',
+    refreshing: false,
   };
 
   onSearch = key => {
@@ -40,7 +41,8 @@ class Category extends Component {
     }, 500);
   };
 
-  getCategory = () => {
+  getCategory = async () => {
+    await this.props.dispatch(getAllCategory());
     const category = this.props.category.categoryData;
     let dataAfterFilter = category.filter(category => {
       return (
@@ -55,10 +57,24 @@ class Category extends Component {
     });
   };
   handleDelete = id => {
-    this.props.dispatch(deleteCategory(id));
-    setTimeout(() => {
+    Alert.alert(
+      'Sure ?',
+      'Do you want to delete this item',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => this.delete(id)},
+      ],
+      {cancelable: false},
+    );
+  };
+
+  delete = async id => {
+    await this.props.dispatch(deleteCategory(id)).then(() => {
       this.getCategory();
-    }, 1000);
+    });
   };
 
   showData = data => {
@@ -69,6 +85,11 @@ class Category extends Component {
     this.getCategory();
   };
 
+  _onRefresh = async () => {
+    this.setState({refreshing: true});
+    await this.getCategory();
+    this.setState({refreshing: false});
+  };
   render() {
     return (
       <View style={{backgroundColor: '#fff'}}>
@@ -117,7 +138,14 @@ class Category extends Component {
             />
           </TouchableOpacity>
         </View>
-        <ScrollView style={{backgroundColor: '#fff'}}>
+        <ScrollView
+          style={{backgroundColor: '#fff'}}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }>
           {!this.props.category.isPending && !this.state.loading ? (
             this.state.category.map(data => {
               return (
