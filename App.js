@@ -1,15 +1,16 @@
-import React from 'react'
-import MainNavigators from './src/Publics/Navigators/MainNavigators'
+import React from 'react';
+import MainNavigators from './src/Publics/Navigators/MainNavigators';
 
-import { Provider } from 'react-redux'
-import store from './src/Publics/Redux/store'
+import {Provider} from 'react-redux';
+import store from './src/Publics/Redux/store';
+console.disableYellowBox = true;
 
 const App = () => {
   return (
     <Provider store={store}>
       <MainNavigators />
     </Provider>
-  )
-}
+  );
+};
 
-export default App
+export default App;
