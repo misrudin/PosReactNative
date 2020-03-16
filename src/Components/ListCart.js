@@ -11,7 +11,7 @@ import {connect} from 'react-redux';
 import {getAllProduct} from '../Publics/Redux/actions/product';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-const urls = 'http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/';
+const urls = 'http://52.70.29.181:4001/api/v1/';
 
 const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';

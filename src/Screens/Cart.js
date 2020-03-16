@@ -19,7 +19,7 @@ import {
   getQty,
 } from '../Publics/Redux/actions/cart';
 import axios from 'axios';
-const urls = 'http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/';
+const urls = 'http://52.70.29.181:4001/api/v1/';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-community/async-storage';
 const token =

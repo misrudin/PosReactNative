@@ -208,9 +208,9 @@ class Home extends Component {
     return (
       <View style={styles.container}>
         <StatusBar
-          // barStyle="dark-content"
+          barStyle="dark-content"
           hidden={false}
-          backgroundColor="#3f026b"
+          backgroundColor="#fff"
           translucent={false}
           networkActivityIndicatorVisible={true}
         />
@@ -219,7 +219,7 @@ class Home extends Component {
             position: 'relative',
             paddingHorizontal: 16,
             paddingVertical: 10,
-            backgroundColor: '#3f026b',
+            backgroundColor: '#fff',
             flexDirection: 'row',
           }}>
           <View style={{flex: 1, position: 'relative'}}>

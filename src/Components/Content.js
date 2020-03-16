@@ -18,6 +18,10 @@ const Content = props => {
             position: 'relative',
             shadowColor: '#eee',
             shadowOffset: {width: 2, height: 2},
+            shadowOpacity: 0.5,
+            shadowRadius: 6,
+
+            elevation: 2,
           }}>
           <TouchableOpacity onPress={() => props.onPress(props.data)}>
             <Image
@@ -34,6 +38,7 @@ const Content = props => {
                 fontWeight: 'bold',
                 fontSize: 16,
                 color: '#0a0317',
+                textTransform: 'capitalize',
               }}>
               {props.data.name}
             </Text>

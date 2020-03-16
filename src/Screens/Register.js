@@ -43,10 +43,7 @@ class Register extends Component {
         loading: true,
       });
       axios
-        .post(
-          `http://ec2-54-173-178-155.compute-1.amazonaws.com:4001/api/v1/auth/register`,
-          data,
-        )
+        .post(`http://52.70.29.181:4001/api/v1/auth/register`, data)
         .then(res => {
           if (!res.data.result) {
             this.setState({
