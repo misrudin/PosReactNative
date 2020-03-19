@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StatusBar,
-  RefreshControl,
   Alert,
 } from 'react-native';
 import ListCategory from '../Components/ListCategory';
@@ -21,41 +20,15 @@ import _ from 'lodash';
 class Category extends Component {
   constructor(props) {
     super(props);
-
-    this.onSearch = _.debounce(this.onSearch, 1000);
-  }
-  state = {
-    category: [],
-    loading: false,
-    search: '',
-    refreshing: false,
-  };
-
-  onSearch = key => {
-    this.setState({
-      search: key,
-      loading: true,
-    });
-    setTimeout(() => {
-      this.getCategory();
-    }, 500);
-  };
-
-  getCategory = async () => {
-    await this.props.dispatch(getAllCategory());
-    const category = this.props.category.categoryData;
-    let dataAfterFilter = category.filter(category => {
-      return (
-        category.nama_category
-          .toLowerCase()
-          .indexOf(this.state.search.toLowerCase()) !== -1
-      );
-    });
-    this.setState({
-      category: dataAfterFilter,
+    this.state = {
+      category: props.category.categoryData,
       loading: false,
-    });
-  };
+      search: '',
+      refreshing: false,
+      token: props.auth.token,
+    };
+  }
+
   handleDelete = id => {
     Alert.alert(
       'Sure ?',
@@ -71,9 +44,18 @@ class Category extends Component {
     );
   };
 
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({
+        category: this.props.category.categoryData,
+      });
+    });
+  }
+
   delete = async id => {
-    await this.props.dispatch(deleteCategory(id)).then(() => {
-      this.getCategory();
+    await this.props.dispatch(deleteCategory(id, this.state.token));
+    this.setState({
+      category: this.props.category.categoryData,
     });
   };
 
@@ -81,22 +63,13 @@ class Category extends Component {
     this.props.navigation.navigate('EditCategory', {data: data});
   };
 
-  componentDidMount = () => {
-    this.getCategory();
-  };
-
-  _onRefresh = async () => {
-    this.setState({refreshing: true});
-    await this.getCategory();
-    this.setState({refreshing: false});
-  };
   render() {
     return (
       <View style={{backgroundColor: '#fff'}}>
         <StatusBar
-          barStyle="light-content"
+          barStyle="dark-content"
           hidden={false}
-          backgroundColor="#3f026b"
+          backgroundColor="#fff"
           translucent={false}
           networkActivityIndicatorVisible={true}
         />
@@ -104,16 +77,21 @@ class Category extends Component {
           style={{
             alignItems: 'center',
             paddingVertical: 10,
-            backgroundColor: '#3f026b',
+            backgroundColor: '#fff',
             paddingHorizontal: 16,
             flexDirection: 'row',
+            shadowOffset: {width: 8, height: 9},
+            shadowColor: '#000',
+            shadowRadius: 10,
+            shadowOpacity: 1,
+            elevation: 8,
           }}>
           <TextInput
             onChangeText={key => this.onSearch(key)}
             placeholder="I want to search..."
             style={{
               flex: 1,
-              backgroundColor: '#eee',
+              backgroundColor: '#fff',
               borderRadius: 20,
               borderWidth: 1,
               borderColor: '#ddd',
@@ -138,26 +116,18 @@ class Category extends Component {
             />
           </TouchableOpacity>
         </View>
-        <ScrollView
-          style={{backgroundColor: '#fff'}}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }>
-          {!this.props.category.isPending && !this.state.loading ? (
-            this.state.category.map(data => {
-              return (
-                <ListCategory
-                  key={data.id}
-                  data={data}
-                  onDelete={this.handleDelete}
-                  edit={this.showData}
-                />
-              );
-            })
-          ) : (
+        <ScrollView style={{backgroundColor: '#fff'}}>
+          {this.state.category.map(data => {
+            return (
+              <ListCategory
+                key={data.id}
+                data={data}
+                onDelete={this.handleDelete}
+                edit={this.showData}
+              />
+            );
+          })}
+          {!this.props.category.isPending ? null : (
             <View style={{flex: 1, backgroundColor: '#fff', marginTop: '50%'}}>
               <ActivityIndicator size="large" color="#ff33ff" />
             </View>
@@ -168,9 +138,10 @@ class Category extends Component {
   }
 }
 
-const mapStateToProps = ({category}) => {
+const mapStateToProps = ({category, auth}) => {
   return {
     category,
+    auth,
   };
 };
 

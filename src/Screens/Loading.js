@@ -1,91 +1,73 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  StatusBar,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {savetoken} from '../Publics/Redux/actions/auth';
 import AsyncStorage from '@react-native-community/async-storage';
-import {connect} from 'react-redux';
-import {getAllProduct} from '../Publics/Redux/actions/product';
-import {getAllCart} from '../Publics/Redux/actions/cart';
-import {getAllCategory} from '../Publics/Redux/actions/category';
-import {saveToken} from '../Publics/Redux/actions/auth';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-class Loading extends React.Component {
-  state = {
-    tokenData: '',
-  };
-
-  getProduct = async () => {
-    await this.props.dispatch(getAllProduct());
-    await this.props.dispatch(getAllCart());
-    await this.props.dispatch(getAllCategory());
-  };
-
-  getToken = async () => {
-    await AsyncStorage.getItem('Token', (err, token) => {
-      this.setState(
-        {
-          tokenData: token,
-        },
-        async () => {
-          await this.props.dispatch(saveToken(token));
-        },
-      );
-    });
-  };
-
-  componentDidMount = () => {
-    this.getProduct();
-    this.getToken();
+const Loading = () => {
+  const dispatch = useDispatch();
+  const [show, setShow] = useState(false);
+  useEffect(() => {
     setTimeout(() => {
-      if (this.state.tokenData) {
-        this.props.dispatch(saveToken(this.state.tokenData));
-        this.props.navigation.navigate('Home');
-      } else {
-        this.props.navigation.navigate('Login');
-      }
+      const getToken = async () => {
+        await AsyncStorage.getItem('Token', (err, token) => {
+          dispatch(savetoken(token));
+        });
+      };
+      getToken();
+    }, 1500);
+    setTimeout(() => {
+      setShow(true);
     }, 500);
-  };
-  render() {
-    return (
-      <View style={{flex: 1, backgroundColor: '#085366'}}>
-        <StatusBar
-          barStyle="light-content"
-          hidden={false}
-          backgroundColor="#085366"
-          translucent={false}
-          networkActivityIndicatorVisible={true}
+  }, []);
+  return (
+    <View style={styles.container}>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+        }}>
+        <Icon
+          name="comments"
+          solid
+          color="#fed6f6"
+          size={90}
+          style={styles.logoHayuu2}
         />
-        <View style={[styles.container, styles.horizontal]}>
-          <ActivityIndicator size="large" color="#ff33ff" />
-        </View>
+        <Icon
+          name="comments"
+          solid
+          color="#ff971d"
+          size={80}
+          style={styles.logoHayuu}
+        />
       </View>
-    );
-  }
-}
+      {show ? <Text style={styles.haeu}>Hayuu</Text> : null}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9f6f7',
   },
-  horizontal: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
+  to: {
+    color: '#333',
+    marginBottom: 10,
+  },
+  haeu: {
+    color: '#ff971d',
+    fontSize: 40,
+    fontWeight: 'bold',
+  },
+  logoHayuu2: {
+    position: 'absolute',
   },
 });
 
-const MapStateToProps = ({product, cart, category, auth}) => {
-  return {
-    product,
-    cart,
-    category,
-    auth,
-  };
-};
-
-export default connect(MapStateToProps)(Loading);
+export default Loading;

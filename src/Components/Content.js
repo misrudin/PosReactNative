@@ -1,63 +1,32 @@
 import React from 'react';
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const Content = props => {
   return (
     <>
-      <View
-        style={{width: '50%', height: 250, padding: 6, position: 'relative'}}>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: '#eee',
-            flex: 1,
-            backgroundColor: '#eee',
-            borderRadius: 6,
-            overflow: 'hidden',
-            position: 'relative',
-            shadowColor: '#eee',
-            shadowOffset: {width: 2, height: 2},
-            shadowOpacity: 0.5,
-            shadowRadius: 6,
-
-            elevation: 2,
-          }}>
-          <TouchableOpacity onPress={() => props.onPress(props.data)}>
-            <Image
-              source={{uri: props.data.image}}
-              style={{width: '100%', height: '100%', opacity: 1}}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 16,
-                color: '#0a0317',
-                textTransform: 'capitalize',
-              }}>
-              {props.data.name}
-            </Text>
-            <Text style={{fontSize: 14, color: '#3b3d3c'}}>
-              Rp. {props.data.price}{' '}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => props.edit(props.data)}>
-              <Icon name="edit" size={20} color="#F4A501" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => props.onDelete(props.data.id)}>
-              <Icon
-                name="trash"
-                size={20}
-                color="#c7040e"
-                style={{marginLeft: 15, marginRight: 5}}
-              />
-            </TouchableOpacity>
+      <View style={styles.container}>
+        <TouchableOpacity onPress={() => props.press(props.data)}>
+          <Image source={{uri: props.data.image}} style={styles.imageLeft} />
+        </TouchableOpacity>
+        <View style={styles.detail}>
+          <Text style={styles.title}>{props.data.name}</Text>
+          <Text style={styles.price}>Rp. {props.data.price}</Text>
+          <Text style={styles.description}>{props.data.description}</Text>
+          <View style={styles.footer}>
+            <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity onPress={() => props.show(props.data)}>
+                <Icon name="edit" size={25} color="red" />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Icon
+                  name="trash"
+                  size={25}
+                  color="red"
+                  style={{marginLeft: 20}}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -65,4 +34,48 @@ const Content = props => {
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+    alignSelf: 'center',
+    width: '95%',
+    marginBottom: 5,
+    marginTop: 5,
+    borderRadius: 10,
+    shadowOffset: {width: 5, height: 5},
+    shadowColor: '#000',
+    shadowRadius: 10,
+    shadowOpacity: 1,
+    elevation: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    position: 'relative',
+  },
+  imageLeft: {
+    width: 120,
+    height: 120,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  detail: {
+    marginLeft: 8,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textTransform: 'capitalize',
+  },
+  description: {
+    color: '#acacac',
+  },
+  price: {
+    fontWeight: 'bold',
+  },
+  footer: {
+    flexDirection: 'column',
+    position: 'absolute',
+    bottom: 0,
+  },
+});
 export default Content;

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -9,98 +9,68 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {connect} from 'react-redux';
 import {editCategory} from '../Publics/Redux/actions/category';
+import {useDispatch, useSelector} from 'react-redux';
 
-import axios from 'axios';
-const urls = 'http://52.70.29.181:4001/api/v1/';
+const EditCategory = props => {
+  const {token} = useSelector(state => state.auth);
+  const [id, setId] = useState(props.route.params.data.id);
+  const [category, setCategory] = useState(
+    props.route.params.data.nama_category,
+  );
+  const [loading, setLoding] = useState(false);
+  const dispatch = useDispatch();
 
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';
-
-class EditCategory extends Component {
-  state = {
-    formCategory: {
-      id: '',
-      category: '',
-    },
-    loading: false,
-  };
-
-  handleChange = e => {
-    let newData = {...this.state.formCategory};
-    newData.category = e;
-    this.setState({
-      formCategory: newData,
-    });
-  };
-
-  edit = () => {
-    const data = this.state.formCategory;
+  const edit = () => {
+    const data = {
+      id,
+      category,
+    };
     if (data.category) {
-      this.setState({
-        loading: true,
-      });
-      this.props.dispatch(editCategory(data)).then(() => {
-        this.setState({
-          loading: false,
-        });
+      setLoding(true);
+      dispatch(editCategory(data, token)).then(() => {
+        setLoding(false);
         Alert.alert('Congratulation', 'Edit Sucess!', [{text: 'OK'}]);
-        this.clear();
-        this.props.navigation.navigate('Category');
+        clear();
+        props.navigation.navigate('Category');
       });
     } else {
       Alert.alert('Warning', 'Please comlete input!', [{text: 'OK'}]);
     }
   };
 
-  clear = () => {
-    this.setState({
-      formCategory: {
-        id: '',
-        category: '',
-      },
-    });
+  const clear = () => {
+    setId('');
+    setCategory('');
   };
 
-  componentDidMount = () => {
-    let newData = {...this.state.formCategory};
-    newData.category = this.props.route.params.data.nama_category;
-    newData.id = this.props.route.params.data.id;
-    this.setState({
-      formCategory: newData,
-    });
-  };
+  return (
+    <>
+      <ScrollView style={styles.container}>
+        <View style={styles.sectionInput}>
+          <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
+            Category Name
+          </Text>
+          <TextInput
+            style={styles.txtInput}
+            onChangeText={e => setCategory(e)}
+            value={category}
+          />
+        </View>
 
-  render() {
-    return (
-      <>
-        <ScrollView style={styles.container}>
-          <View style={styles.sectionInput}>
-            <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
-              Category Name
-            </Text>
-            <TextInput
-              style={styles.txtInput}
-              onChangeText={e => this.handleChange(e)}
-              value={this.state.formCategory.category}
-            />
-          </View>
-
-          <View style={styles.sectionBtn}>
-            {this.state.loading ? (
-              <ActivityIndicator size="large" color="#ff33ff" />
-            ) : (
-              <TouchableOpacity style={styles.styleBtn} onPress={this.edit}>
-                <Text style={{color: 'white', fontSize: 16}}>Save</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </ScrollView>
-      </>
-    );
-  }
-}
+        <View style={styles.sectionBtn}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#ff33ff" />
+          ) : (
+            <TouchableOpacity style={styles.styleBtn} onPress={edit}>
+              <Text style={{color: 'white', fontSize: 16}}>Save</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -140,10 +110,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({category}) => {
-  return {
-    category,
-  };
-};
-
-export default connect(mapStateToProps)(EditCategory);
+export default EditCategory;

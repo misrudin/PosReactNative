@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -12,39 +12,35 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
-import {connect} from 'react-redux';
-// import {addProduct} from '../Publics/Redux/actions/product';
-import axios from 'axios';
-const urls = 'http://52.70.29.181:4001/api/v1/';
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';
+import {addProduct} from '../Publics/Redux/actions/product';
+import {useDispatch, useSelector} from 'react-redux';
 
-const options = {
-  title: 'Add product image',
-  mediaType: 'photo',
-  maxWidth: 1024,
-  maxHeight: 1024,
-  noData: true,
-  cropping: true,
-  storageOptions: {
-    skipBackup: true,
-    path: 'posApp',
-  },
-};
+const InputProduct = () => {
+  const [image, setImage] = useState(null);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [stok, setStok] = useState('');
+  const [price, setPrice] = useState('');
+  const [id_category, setId] = useState('');
+  const [imgSrc, setImgSrc] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const {token} = useSelector(state => state.auth);
+  const {categoryData} = useSelector(state => state.category);
+  const dispatch = useDispatch();
 
-class InputProduct extends Component {
-  state = {
-    image: null,
-    name: '',
-    description: '',
-    stok: '',
-    price: '',
-    id_category: '',
-    imgSrc: null,
-    loading: false,
-  };
-
-  showImage = () => {
+  const showImage = () => {
+    const options = {
+      title: 'Add product image',
+      mediaType: 'photo',
+      maxWidth: 1024,
+      maxHeight: 1024,
+      noData: true,
+      cropping: true,
+      storageOptions: {
+        skipBackup: true,
+        path: 'posApp',
+      },
+    };
     ImagePicker.showImagePicker(options, response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -52,20 +48,15 @@ class InputProduct extends Component {
         console.log('ImagePicker Error: ', response.error);
       } else {
         const source = {uri: response.uri};
-        this.setState({
-          image: source,
-          imgSrc: response,
-        });
+        setImage(source);
+        setImgSrc(response);
       }
     });
   };
 
-  handleSave = async () => {
-    const {name, description, stok, price, id_category, imgSrc} = this.state;
+  const handleSave = async () => {
     if (name && description && stok && price && id_category && imgSrc) {
-      this.setState({
-        loading: true,
-      });
+      setLoading(true);
       let fd = new FormData();
       fd.append('name', name);
       fd.append('description', description);
@@ -77,18 +68,11 @@ class InputProduct extends Component {
         name: imgSrc.fileName,
         type: imgSrc.type,
       });
-      await axios
-        .post(urls + 'product', fd, {
-          headers: {
-            token: token,
-          },
-        })
+      await dispatch(addProduct(fd, token))
         .then(() => {
-          this.setState({
-            loading: false,
-          });
+          setLoading(false);
           Alert.alert('Congratulation', 'Add Sucess!', [{text: 'OK'}]);
-          this.clear();
+          clear();
         })
         .catch(() => {
           Alert.alert('Opss', 'Add Failed!', [{text: 'OK'}]);
@@ -98,143 +82,126 @@ class InputProduct extends Component {
     }
   };
 
-  clear = () => {
-    const {
-      name,
-      description,
-      stok,
-      price,
-      image,
-      id_category,
-      imgSrc,
-    } = this.state;
-    this.setState({
-      name: '',
-      description: '',
-      stok: '',
-      price: '',
-      image: null,
-      id_category: '',
-      imgSrc: null,
-    });
+  const clear = () => {
+    setName('');
+    setDescription('');
+    setId('');
+    setImage(null);
+    setImgSrc(null);
+    setStok('');
+    setPrice('');
   };
 
-  render() {
-    return (
-      <>
-        <ScrollView style={styles.container}>
-          <View style={styles.sectionInput}>
-            <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
-              Name
-            </Text>
-            <TextInput
-              style={styles.txtInput}
-              onChangeText={e => this.setState({name: e})}
-              value={this.state.name}
-            />
-          </View>
-          <View style={styles.sectionInput}>
-            <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
-              Description
-            </Text>
-            <TextInput
-              style={styles.txtInput}
-              onChangeText={e => this.setState({description: e})}
-              value={this.state.description}
-            />
-          </View>
-          <View style={styles.sectionInput}>
-            <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
-              Stok
-            </Text>
-            <TextInput
-              style={styles.txtInput}
-              onChangeText={e => this.setState({stok: e})}
-              value={this.state.stok}
-              keyboardType={'numeric'}
-            />
-          </View>
-          <View style={styles.sectionInput}>
-            <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
-              Price
-            </Text>
-            <TextInput
-              style={styles.txtInput}
-              onChangeText={e => this.setState({price: e})}
-              value={this.state.price}
-              keyboardType={'numeric'}
-            />
-          </View>
+  return (
+    <>
+      <ScrollView style={styles.container}>
+        <View style={styles.sectionInput}>
+          <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
+            Name
+          </Text>
+          <TextInput
+            style={styles.txtInput}
+            onChangeText={e => setName(e)}
+            value={name}
+          />
+        </View>
+        <View style={styles.sectionInput}>
+          <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
+            Description
+          </Text>
+          <TextInput
+            style={styles.txtInput}
+            onChangeText={e => setDescription(e)}
+            value={description}
+          />
+        </View>
+        <View style={styles.sectionInput}>
+          <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
+            Stok
+          </Text>
+          <TextInput
+            style={styles.txtInput}
+            onChangeText={e => setStok(e)}
+            value={stok}
+            keyboardType={'numeric'}
+          />
+        </View>
+        <View style={styles.sectionInput}>
+          <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
+            Price
+          </Text>
+          <TextInput
+            style={styles.txtInput}
+            onChangeText={e => setPrice(e)}
+            value={price}
+            keyboardType={'numeric'}
+          />
+        </View>
 
-          <View style={styles.sectionInput}>
-            <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
-              Category
-            </Text>
-            <View
+        <View style={styles.sectionInput}>
+          <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
+            Category
+          </Text>
+          <View
+            style={{
+              borderColor: '#ddd',
+              borderRadius: 8,
+              borderWidth: 1,
+              backgroundColor: '#fff',
+            }}>
+            <Picker
+              style={{color: '#999'}}
+              selectedValue={id_category}
+              onValueChange={(itemValue, itemIndex) => setId(itemValue)}>
+              <Picker.item label="Select categories.." value="" />
+              {categoryData.map(category => {
+                return (
+                  <Picker.Item
+                    key={category.id}
+                    label={category.nama_category}
+                    value={category.id}
+                  />
+                );
+              })}
+            </Picker>
+          </View>
+        </View>
+
+        <View style={styles.sectionInput}>
+          <View style={{alignItems: 'center'}}>
+            <Image
+              source={image}
               style={{
-                borderColor: '#ddd',
-                borderRadius: 8,
+                width: 100,
+                height: 100,
                 borderWidth: 1,
-                backgroundColor: '#fff',
-              }}>
-              <Picker
-                style={{color: '#999'}}
-                selectedValue={this.state.id_category}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({id_category: itemValue})
-                }>
-                <Picker.item label="Select categories.." value="" />
-                {this.props.category.categoryData.map(category => {
-                  return (
-                    <Picker.Item
-                      key={category.id}
-                      label={category.nama_category}
-                      value={category.id}
-                    />
-                  );
-                })}
-              </Picker>
-            </View>
+                borderColor: '#ddd',
+                margin: 10,
+              }}
+            />
+            <TouchableOpacity style={styles.btn} onPress={() => showImage()}>
+              <Text style={{color: '#3f026b', fontWeight: 'bold'}}>
+                Chose Image
+              </Text>
+            </TouchableOpacity>
           </View>
+        </View>
 
-          <View style={styles.sectionInput}>
-            <View style={{alignItems: 'center'}}>
-              <Image
-                source={this.state.image}
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderWidth: 1,
-                  borderColor: '#ddd',
-                  margin: 10,
-                }}
-              />
-              <TouchableOpacity
-                style={styles.btn}
-                onPress={() => this.showImage()}>
-                <Text style={{color: '#3f026b', fontWeight: 'bold'}}>
-                  Chose Image
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.sectionBtn}>
-            {this.state.loading ? (
-              <ActivityIndicator size="large" color="#ff33ff" />
-            ) : (
-              <TouchableOpacity
-                style={styles.styleBtn}
-                onPress={() => this.handleSave()}>
-                <Text style={{color: 'white', fontSize: 16}}>Save</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </ScrollView>
-      </>
-    );
-  }
-}
+        <View style={styles.sectionBtn}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#ff33ff" />
+          ) : (
+            <TouchableOpacity
+              style={styles.styleBtn}
+              onPress={() => handleSave()}>
+              <Text style={{color: 'white', fontSize: 16}}>Save</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -282,11 +249,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({product, category}) => {
-  return {
-    product,
-    category,
-  };
-};
-
-export default connect(mapStateToProps)(InputProduct);
+export default InputProduct;

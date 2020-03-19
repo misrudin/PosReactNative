@@ -1,20 +1,17 @@
-import React, {Component} from 'react';
-import {Image} from 'react-native';
+import React from 'react';
+import {useSelector} from 'react-redux';
 import Home from '../../Screens/Home';
 import Login from '../../Screens/Login';
 import Register from '../../Screens/Register';
-import Product from '../../Screens/Product';
 import Category from '../../Screens/Category';
 import Acount from '../../Screens/Acount';
-import Cart from '../../Screens/Cart';
 import Loading from '../../Screens/Loading';
 import InputProduct from '../../Screens/InputProduct';
 import History from '../../Screens/History';
 import InputCategory from '../../Screens/InputCategory';
 import EditCategory from '../../Components/EditCategory';
 import EditProduct from '../../Components/EditProduct';
-import ChangePassword from '../../Components/ChangePassword';
-import {NavigationContainer} from '@react-navigation/native';
+
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -22,25 +19,26 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 const MainNavigators = () => {
   return (
     <>
       <Tab.Navigator
-        initialRouteName="Home"
-        backBehavior="none"
         tabBarOptions={{
-          activeTintColor: '#F4A501',
-          activeBackgroundColor: '#3f026b',
-          inactiveTintColor: '#3f026b',
+          activeTintColor: '#fff',
+          activeBackgroundColor: '#3a7bd5',
+          inactiveTintColor: '#3a7bd5',
           inactiveBackgroundColor: '#fff',
+          keyboardHidesTabBar: true,
         }}>
         <Tab.Screen
           name="Home"
           component={Home}
           options={{
             tabBarLabel: 'Home',
+            unmountOnBlur: true,
             tabBarIcon: ({color, size}) => (
-              <Icon name="home" size={24} color="#900" />
+              <Icon name="home" size={22} color="#D39D38" />
             ),
           }}
         />
@@ -50,7 +48,7 @@ const MainNavigators = () => {
           options={{
             tabBarLabel: 'Add Product',
             tabBarIcon: ({color, size}) => (
-              <Icon name="plus-circle" size={24} color="#900" />
+              <Icon name="plus-circle" size={24} color="#D39D38" />
             ),
           }}
         />
@@ -58,9 +56,10 @@ const MainNavigators = () => {
           name="Category"
           component={Category}
           options={{
+            unmountOnBlur: true,
             tabBarLabel: 'Category',
             tabBarIcon: ({color, size}) => (
-              <Icon name="tags" size={24} color="#900" />
+              <Icon name="tags" size={24} color="#D39D38" />
             ),
           }}
         />
@@ -70,7 +69,7 @@ const MainNavigators = () => {
           options={{
             tabBarLabel: 'History',
             tabBarIcon: ({color, size}) => (
-              <Icon name="history" size={24} color="#900" />
+              <Icon name="history" size={24} color="#D39D38" />
             ),
           }}
         />
@@ -80,7 +79,7 @@ const MainNavigators = () => {
           options={{
             tabBarLabel: 'Acount',
             tabBarIcon: ({color, size}) => (
-              <Icon name="user" size={24} color="#900" />
+              <Icon name="user" size={24} color="#D39D38" />
             ),
           }}
         />
@@ -89,138 +88,56 @@ const MainNavigators = () => {
   );
 };
 
-class AuthNavigator extends Component {
-  render() {
-    return (
-      <Tab.Navigator
-        initialRouteName="loading"
-        backBehavior="none"
-        tabBarOptions={{
-          activeTintColor: '#F4A501',
-          activeBackgroundColor: '#007a3d',
-        }}>
-        <Tab.Screen
-          name="Loading"
-          component={Loading}
-          options={{
-            tabBarLabel: 'Loading',
-            tabBarVisible: false,
-          }}
-        />
-        <Tab.Screen
-          name="Login"
-          component={login}
-          options={{
-            tabBarLabel: 'Loading',
-            tabBarVisible: false,
-          }}
-        />
-        <Tab.Screen
-          name="Home"
-          component={main}
-          options={{
-            tabBarLabel: 'Loading',
-            tabBarVisible: false,
-          }}
-        />
-      </Tab.Navigator>
-    );
-  }
-}
+const AuthNav = () => {
+  const {loading, token} = useSelector(state => state.auth);
 
-class login extends Component {
-  render() {
-    return (
-      <Tab.Navigator
-        initialRouteName="Login"
-        backBehavior="none"
-        tabBarOptions={{
-          activeTintColor: '#F4A501',
-          activeBackgroundColor: '#007a3d',
-        }}>
-        <Tab.Screen
-          name="Login"
-          component={Login}
-          options={{
-            tabBarLabel: 'Login',
-            tabBarVisible: false,
-          }}
-        />
-      </Tab.Navigator>
-    );
+  if (loading) {
+    return <Loading />;
   }
-}
-class main extends Component {
-  render() {
-    return (
-      <Tab.Navigator
-        initialRouteName="Home"
-        backBehavior="none"
-        tabBarOptions={{
-          activeTintColor: '#F4A501',
-          activeBackgroundColor: '#007a3d',
-        }}>
-        <Tab.Screen
-          name="Home"
-          component={MainNavigators}
-          options={{
-            tabBarLabel: 'Home',
-            tabBarVisible: false,
-          }}
-        />
-        <Tab.Screen
-          name="Logout"
-          component={AuthNavigator}
-          options={{
-            tabBarLabel: 'Home',
-            tabBarVisible: false,
-          }}
-        />
-      </Tab.Navigator>
-    );
-  }
-}
 
-export const SubNavigator = () => {
   return (
     <>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Auth">
-          <Stack.Screen
-            name="Auth"
-            component={AuthNavigator}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="Register"
-            component={Register}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="EditProduct"
-            component={EditProduct}
-            options={{headerTitle: 'Edit Product'}}
-          />
-          <Stack.Screen
-            name="InputCategory"
-            component={InputCategory}
-            options={{headerTitle: 'Add Category'}}
-          />
-          <Stack.Screen
-            name="EditCategory"
-            component={EditCategory}
-            options={{headerTitle: 'Edit Category'}}
-          />
-          <Stack.Screen
-            name="ChangePassword"
-            component={ChangePassword}
-            options={{headerTitle: 'Change Password'}}
-          />
-          <Stack.Screen name="Cart" component={Cart} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Stack.Navigator>
+        {token === null ? (
+          <>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Register"
+              component={Register}
+              options={{headerShown: false}}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={MainNavigators}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="InputCategory"
+              component={InputCategory}
+              options={{headerShown: true}}
+            />
+            <Stack.Screen
+              name="EditCategory"
+              component={EditCategory}
+              options={{headerShown: true}}
+            />
+            <Stack.Screen
+              name="EditProduct"
+              component={EditProduct}
+              options={{headerShown: true}}
+            />
+          </>
+        )}
+      </Stack.Navigator>
     </>
   );
 };
 
-export default SubNavigator;
+export default AuthNav;

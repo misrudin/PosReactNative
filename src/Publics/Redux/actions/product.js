@@ -1,56 +1,41 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-community/async-storage';
+import {Link} from '../../env';
+const URL = Link();
 
-const urls = 'http://52.70.29.181:4001/api/v1/';
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';
-
-export const getAllProduct = () => {
+export const getAllProduct = token => {
   return {
     type: 'GET_PRODUCT',
-    payload: axios.get(urls + 'product/all', {
+    payload: axios.get(URL + 'product/all', {
       headers: {
         token: token,
       },
     }),
   };
 };
-export const addProduct = fd => {
+export const addProduct = (fd, token) => {
   return {
     type: 'ADD_PRODUCT',
-    payload: axios.post(urls + 'product', fd, {
+    payload: axios.post(URL + 'product', fd, {
       headers: {
         token: token,
       },
     }),
   };
 };
-
-export const filterProduct = key => {
-  return {
-    type: 'FIL_PRODUCT',
-    payload: axios.post(urls + `product/filter?keyword${key}`, {
-      headers: {
-        token: token,
-      },
-    }),
-  };
-};
-export const deleteProduct = id => {
+export const deleteProduct = (id, token) => {
   return {
     type: 'DELETE_PRODUCT',
-    payload: axios.delete(urls + `product/${id}`, {
+    payload: axios.delete(URL + `product/${id}`, {
       headers: {
         token: token,
       },
     }),
   };
 };
-
-export const editProduct = (id, fd) => {
+export const editProduct = (id, fd, token) => {
   return {
     type: 'EDIT_PRODUCT',
-    payload: axios.patch(urls + `product/${id}`, fd, {
+    payload: axios.patch(URL + `product/${id}`, fd, {
       headers: {
         token: token,
       },
@@ -58,16 +43,13 @@ export const editProduct = (id, fd) => {
   };
 };
 
-export const pagination = (page, category, keyword) => {
+export const pagination = (page, token) => {
   return {
     type: 'PAGE',
-    payload: axios.get(
-      urls + `product?page=${page}&keyword=${keyword}&category=${category}`,
-      {
-        headers: {
-          token: token,
-        },
+    payload: axios.get(URL + `product?page=${page}`, {
+      headers: {
+        token: token,
       },
-    ),
+    }),
   };
 };

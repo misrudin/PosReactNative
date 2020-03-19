@@ -1,18 +1,17 @@
 import axios from 'axios';
-const urls = 'http://52.70.29.181:4001/api/v1/';
+import {Link} from '../../env';
 
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';
+const URL = Link();
 
-export const getAllCart = () => {
+export const getAllCart = token => {
   return {
     type: 'GET_CART',
-    payload: axios.get(urls + `cart`, {
+    payload: axios.get(URL + `cart`, {
       headers: {
         token: token,
       },
     }),
-    payloadQty: axios.get(urls + `cart/qty`, {
+    payloadQty: axios.get(URL + `cart/qty`, {
       headers: {
         token: token,
       },
@@ -20,10 +19,10 @@ export const getAllCart = () => {
   };
 };
 
-export const addProductToCart = data => {
+export const addProductToCart = (data, token) => {
   return {
     type: 'ADD_CART',
-    payload: axios.post(urls + 'cart', data, {
+    payload: axios.post(URL + 'cart', data, {
       headers: {
         token: token,
       },
@@ -31,10 +30,10 @@ export const addProductToCart = data => {
   };
 };
 
-export const checkOutAll = data => {
+export const checkOutAll = (data, token) => {
   return {
     type: 'CHECKOUT',
-    payload: axios.post(urls + 'cart/checkout', data, {
+    payload: axios.post(URL + 'cart/checkout', data, {
       headers: {
         token: token,
       },
@@ -42,10 +41,10 @@ export const checkOutAll = data => {
   };
 };
 
-export const deleteAll = () => {
+export const deleteAll = token => {
   return {
     type: 'DELETEALL',
-    payload: axios.delete(urls + 'cart/all', {
+    payload: axios.delete(URL + 'cart/all', {
       headers: {
         token: token,
       },
@@ -53,10 +52,10 @@ export const deleteAll = () => {
   };
 };
 
-export const deleteCart = id_cart => {
+export const deleteCart = (id_cart, token) => {
   return {
     type: 'DELETECART',
-    payload: axios.delete(urls + `cart?id_cart=${id_cart}`, {
+    payload: axios.delete(URL + `cart?id_cart=${id_cart}`, {
       headers: {
         token: token,
       },
@@ -67,7 +66,7 @@ export const deleteCart = id_cart => {
 export const getDetail = faktur => {
   return {
     type: 'DETAIL',
-    payload: axios.get(process.env.REACT_APP_URL + `payment?faktur=${faktur}`, {
+    payload: axios.get(URL + `payment?faktur=${faktur}`, {
       headers: {
         token: localStorage.getItem('Token'),
       },
@@ -78,9 +77,9 @@ export const getDetail = faktur => {
 export const addQty = id_cart => {
   return {
     type: 'ADDQTY',
-    payload: axios.patch(urls + `cart/add/${id_cart}`, {
+    payload: axios.patch(URL + `cart/add/${id_cart}`, {
       headers: {
-        token: token,
+        token: localStorage.getItem('Token'),
       },
     }),
   };
@@ -88,9 +87,9 @@ export const addQty = id_cart => {
 export const minQty = id_cart => {
   return {
     type: 'MINQTY',
-    payload: axios.patch(urls + `cart/min/${id_cart}`, {
+    payload: axios.patch(URL + `cart/min/${id_cart}`, {
       headers: {
-        token: token,
+        token: localStorage.getItem('Token'),
       },
     }),
   };

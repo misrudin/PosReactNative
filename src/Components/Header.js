@@ -1,34 +1,37 @@
-import React from 'react'
-import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
+import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import {useSelector} from 'react-redux';
 
-const Header = (props) => {
-    return (
-        <>
-            <View style={{ flex: 1, position: "relative" }}>
-                <TextInput placeholder='I want to search ...' style={styles.search} onChangeText={(key) => props.onChange(key)} />
-                <Image source={require('../Assets/img/search.png')} style={{ position: 'absolute', top: 12, left: 12 }} />
-            </View>
-            <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: "center" }}>
-                <TouchableOpacity onPress={props.onPress}>
-                    <Text>Cart(0)</Text>
-                </TouchableOpacity>
-            </View>
-        </>
-    )
-}
+const Header = props => {
+  const {qty} = useSelector(state => state.cart);
+  return (
+    <>
+      <View style={styles.container}>
+        <Text style={{color: '#fff'}}>Header</Text>
+        <Text>{qty}</Text>
+      </View>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
-    search: {
-        backgroundColor: 'white',
-        paddingLeft: 40,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 20,
-        paddingRight: 20,
-        color: 'grey',
-        fontSize: 14,
-        paddingVertical: 5
-    }
-})
+  container: {
+    paddingHorizontal: 10,
+    backgroundColor: '#348AC7',
+    paddingVertical: 10,
+    shadowOffset: {width: 8, height: 9},
+    shadowColor: '#000',
+    shadowRadius: 10,
+    shadowOpacity: 1,
+    elevation: 8,
+  },
+});
 
-export default Header
+export default Header;

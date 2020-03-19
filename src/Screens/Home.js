@@ -3,82 +3,98 @@ import {
   View,
   Text,
   StyleSheet,
-  Alert,
-  TextInput,
   ScrollView,
-  TouchableOpacity,
+  FlatList,
   ActivityIndicator,
-  StatusBar,
-  RefreshControl,
 } from 'react-native';
-import Content from '../Components/Content';
-import Hot from '../Components/Hot';
-import {connect} from 'react-redux';
-import {pagination, deleteProduct} from '../Publics/Redux/actions/product';
-import {
-  getAllCart,
-  addProductToCart,
-  getQty,
-} from '../Publics/Redux/actions/cart';
+import Header from '../Components/Header';
 import {getAllCategory} from '../Publics/Redux/actions/category';
+import {addProductToCart, getQty} from '../Publics/Redux/actions/cart';
+import {pagination} from '../Publics/Redux/actions/product';
+import {connect} from 'react-redux';
 import _ from 'lodash';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+
+import {Hot} from '../Components/Hot';
+import Content from '../Components/Content';
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      product: [],
-      cartData: [],
-      tokenData: '',
-      loading: false,
+      token: this.props.auth.token,
+      product: this.props.product.productData[2],
       page: 1,
-      keyword: '',
-      categoryKey: '',
-      dataAfterFilter: [],
+      category: this.props.category.categoryData,
+      cart: [],
+      qty: 0,
       cart: {
         id_user: '',
         qty: 1,
         id_product: '',
       },
-      scrool: false,
-      show: false,
-      qty: 0,
-      total: 0,
-      refreshing: false,
     };
-    this.search = _.debounce(this.search, 1000);
+    this.getProduct = _.debounce(this.getProduct, 1);
   }
 
-  getProduct = async () => {
-    const page = this.state.page;
-    const category = this.state.categoryKey;
-    const keyword = this.state.keyword;
-    await this.props.dispatch(pagination(page, category, keyword));
-    this.setState({
-      product: this.state.product.concat(this.props.product.productData[2]),
-    });
-    this.morepage();
+  getProduct = () => {
+    this.props
+      .dispatch(pagination(this.state.page, this.state.token))
+      .then(() => {
+        this.setState({
+          product: this.state.product.concat(this.props.product.productData[2]),
+        });
+      });
   };
-  getProductPage = async () => {
-    const page = this.state.page;
-    const category = this.state.categoryKey;
-    const keyword = this.state.keyword;
-    await this.props.dispatch(pagination(page, category, keyword));
-    this.setState({
-      product: this.props.product.productData[2],
-    });
-    this.morepage();
+
+  netxtpage = async () => {
+    if (this.state.page < this.props.product.productData[0]) {
+      this.setState(
+        {
+          page: this.state.page + 1,
+        },
+        () => {
+          this.getProduct();
+        },
+      );
+    }
   };
-  search = async () => {
-    const page = this.state.page;
-    const category = this.state.categoryKey;
-    const keyword = this.state.keyword;
-    await this.props.dispatch(pagination(page, category, keyword));
-    this.morepage();
-    this.setState({
-      product: this.props.product.productData[2],
+
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.props.dispatch(getAllCategory(this.state.token)).then(() => {
+        this.setState({
+          category: this.props.category.categoryData,
+        });
+      });
+
+      this.setState(
+        {
+          page: 1,
+          product: [],
+        },
+        () => {
+          this.getProduct();
+        },
+      );
     });
+  }
+
+  addToCart = product => {
+    if (product.stok > 0) {
+      const newCart = {...this.state.cart};
+      newCart.id_product = product.id;
+      newCart.id_user = 10;
+      this.setState(
+        {
+          cart: newCart,
+        },
+        async () => {
+          const data = this.state.cart;
+          await this.props.dispatch(addProductToCart(data, this.state.token));
+          await this.sendQty();
+        },
+      );
+    }
   };
 
   sendQty = () => {
@@ -94,276 +110,85 @@ class Home extends Component {
     this.props.dispatch(getQty(this.state.qty));
   };
 
-  morepage = () => {
-    if (!this.props.product.productData[2]) {
-      this.setState({
-        show: false,
-      });
-    } else if (this.state.page < this.props.product.productData[0]) {
-      this.setState({
-        show: true,
-      });
-    } else {
-      this.setState({
-        show: false,
-      });
-    }
-  };
-
-  start = async () => {
-    await this.getProduct();
-    await this.props.dispatch(getAllCategory());
-    await this.props.dispatch(getAllCart());
-    this.setState({
-      cartData: this.props.cart.cartData,
-    });
-    await this.sendQty();
-    this.morepage();
-  };
-  componentDidMount() {
-    this.start();
-  }
-
-  _onRefresh = async () => {
-    this.setState({refreshing: true});
-    await this.props.dispatch(getAllCart());
-    await this.sendQty();
-    await this.getProductPage();
-    this.setState({refreshing: false});
-  };
-
-  addToCart = product => {
-    if (product.stok > 0) {
-      const newCart = {...this.state.cart};
-      newCart.id_product = product.id;
-      newCart.id_user = 10;
-      this.setState(
-        {
-          cart: newCart,
-        },
-        async () => {
-          const data = this.state.cart;
-          await this.props.dispatch(addProductToCart(data));
-          await this.sendQty();
-        },
-      );
-    }
-  };
-
-  onSearch = key => {
-    this.setState(
-      {
-        keyword: key,
-        page: 1,
-        scrool: false,
-        show: false,
-      },
-      () => {
-        this.search();
-      },
-    );
-  };
-
-  nextpage = () => {
-    if (this.state.page < this.props.product.productData[0]) {
-      this.setState(
-        {
-          page: this.state.page + 1,
-          scrool: true,
-        },
-        () => {
-          this.getProduct();
-        },
-      );
-    }
-  };
-
-  handleDelete = id => {
-    Alert.alert(
-      'Sure?',
-      'Do you want to delete this item',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {text: 'OK', onPress: () => this.deleteOk(id)},
-      ],
-      {cancelable: false},
-    );
-  };
-
-  deleteOk = async id => {
-    await this.props.dispatch(deleteProduct(id)).then(() => {
-      this.getProductPage();
-    });
-  };
-
-  showData = data => {
-    this.props.navigation.navigate('EditProduct', {data: data});
+  showdata = data => {
+    this.props.navigation.navigate('EditProduct', {data});
   };
 
   render() {
-    const qty = this.props.cart.qty;
     return (
-      <View style={styles.container}>
-        <StatusBar
-          barStyle="dark-content"
-          hidden={false}
-          backgroundColor="#fff"
-          translucent={false}
-          networkActivityIndicatorVisible={true}
-        />
-        <View
-          style={{
-            position: 'relative',
-            paddingHorizontal: 16,
-            paddingVertical: 10,
-            backgroundColor: '#fff',
-            flexDirection: 'row',
-          }}>
-          <View style={{flex: 1, position: 'relative'}}>
-            <TextInput
-              placeholder="I want to search ..."
-              style={styles.search}
-              onChangeText={key => this.onSearch(key)}
-              value={this.state.key}
-            />
-            <Icon
-              name="search"
-              size={20}
-              color="#3f026b"
-              style={{position: 'absolute', top: 10, left: 10}}
-            />
-          </View>
-          <View
-            style={{
-              justifyContent: 'center',
-              marginHorizontal: 11,
-              alignItems: 'center',
-            }}>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('Cart')}
-              style={{flexDirection: 'row'}}>
-              <Icon name="shopping-cart" size={20} color="#F4A501" />
-              <Text
-                style={{fontWeight: 'bold', fontSize: 14, color: '#F4A501'}}>
-                ({qty})
-              </Text>
-            </TouchableOpacity>
-          </View>
+      <>
+        <Header />
+        <View style={styles.hot}>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={this.state.category}
+            renderItem={({item}) => <Hot data={item} />}
+            keyExtractor={item => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+          />
         </View>
-        {/* content */}
-        <ScrollView
-          ref={ref => (this.scrollView = ref)}
-          onContentSizeChange={(contentWidth, contentHeight) => {
-            this.state.scrool
-              ? this.scrollView.scrollToEnd({animated: true})
-              : null;
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
+        <View style={styles.container}>
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            data={this.state.product}
+            renderItem={({item}) => (
+              <Content
+                data={item}
+                press={this.addToCart}
+                show={this.showdata}
+              />
+            )}
+            keyExtractor={item => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            onEndReached={this.netxtpage}
+            onEndReachedThreshold={0.5}
+          />
+          {this.props.product.isPending ? (
+            <ActivityIndicator
+              size="large"
+              color="#285bd4"
+              style={styles.loading}
             />
-          }>
-          <View style={styles.content}>
-            {/* Hot featured */}
-            {/* <View style={{ backgroundColor: '#ddd', paddingVertical: 10, flex: 1 }}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: '100%', borderRadius: 5, flexDirection: 'row', paddingLeft: 16 }}>
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                                <Hot />
-                            </ScrollView>
-                        </View> */}
-
-            {/* Second Featured */}
-
-            <View
-              style={{
-                paddingHorizontal: 10,
-                flex: 1,
-                backgroundColor: '#fff',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                paddingTop: 10,
-              }}>
-              {!this.props.product.isPending ? (
-                this.state.product.map(data => {
-                  return (
-                    <Content
-                      key={data.id}
-                      data={data}
-                      onPress={this.addToCart}
-                      onDelete={this.handleDelete}
-                      edit={this.showData}
-                    />
-                  );
-                })
-              ) : (
-                <View
-                  style={{flex: 1, backgroundColor: '#fff', marginTop: '50%'}}>
-                  <ActivityIndicator size="large" color="#ff33ff" />
-                </View>
-              )}
-            </View>
-          </View>
-          {this.state.show ? (
-            <TouchableOpacity
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                margin: 10,
-                borderRadius: 20,
-                padding: 5,
-                backgroundColor: '#fff',
-              }}
-              onPress={() => this.nextpage()}>
-              <Icon name="arrow-down" size={25} color="#F4A501" />
-            </TouchableOpacity>
           ) : null}
-        </ScrollView>
-      </View>
+        </View>
+      </>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: 10,
     flex: 1,
     backgroundColor: '#fff',
-    flexDirection: 'column',
   },
-  content: {
-    flex: 1,
-  },
-  search: {
+  hot: {
+    width: '100%',
     backgroundColor: '#eee',
-    paddingLeft: 40,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 20,
-    paddingRight: 20,
-    color: 'grey',
-    fontSize: 14,
-    paddingVertical: 5,
+    paddingVertical: 10,
+    shadowOffset: {width: 8, height: 9},
+    shadowColor: '#000',
+    shadowRadius: 10,
+    shadowOpacity: 1,
+    elevation: 4,
+  },
+  loading: {
+    position: 'absolute',
+    top: 0,
+    bottom: '50%',
+    left: 0,
+    right: 0,
   },
 });
 
-const MapStateToProps = ({product, cart, category, auth, history}) => {
+const mapStateToProps = ({product, auth, category, cart}) => {
   return {
     product,
-    cart,
-    category,
     auth,
-    history,
+    category,
+    cart,
   };
 };
 
-export default connect(MapStateToProps)(Home);
+export default connect(mapStateToProps)(Home);

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -9,41 +9,27 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import {connect} from 'react-redux';
-// import {addCategory} from '../Publics/Redux/actions/category';
-import axios from 'axios';
+import {addCategory} from '../Publics/Redux/actions/category';
+import {useDispatch, useSelector} from 'react-redux';
 
-const urls = 'http://52.70.29.181:4001/api/v1/';
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';
+const InputCategory = props => {
+  const [category, setCategory] = useState('');
+  const [loading, setLoading] = useState(false);
+  const {token} = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
-class InputCategory extends Component {
-  state = {
-    category: '',
-    loading: false,
-  };
-
-  postCategory = () => {
+  const postCategory = () => {
     const data = {
-      category: this.state.category,
+      category,
     };
     if (data.category) {
-      this.setState({
-        loading: true,
-      });
-      axios
-        .post(urls + 'category', data, {
-          headers: {
-            token: token,
-          },
-        })
+      setLoading(true);
+      dispatch(addCategory(data, token))
         .then(() => {
-          this.setState({
-            loading: false,
-          });
+          setLoading(false);
           Alert.alert('Congratulation', 'Add Sucess!', [{text: 'OK'}]);
-          this.clear();
-          this.props.navigation.navigate('Category');
+          clear();
+          props.navigation.navigate('Category');
         })
         .catch(() => {
           Alert.alert('Opss', 'Add Failed!', [{text: 'OK'}]);
@@ -53,43 +39,39 @@ class InputCategory extends Component {
     }
   };
 
-  clear = () => {
-    this.setState({
-      category: '',
-    });
+  const clear = () => {
+    setCategory('');
   };
 
-  render() {
-    return (
-      <>
-        <ScrollView style={styles.container}>
-          <View style={styles.sectionInput}>
-            <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
-              Category Name
-            </Text>
-            <TextInput
-              style={styles.txtInput}
-              onChangeText={e => this.setState({category: e})}
-              value={this.state.name}
-            />
-          </View>
+  return (
+    <>
+      <ScrollView style={styles.container}>
+        <View style={styles.sectionInput}>
+          <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
+            Category Name
+          </Text>
+          <TextInput
+            style={styles.txtInput}
+            onChangeText={e => setCategory(e)}
+            value={category}
+          />
+        </View>
 
-          <View style={styles.sectionBtn}>
-            {this.state.loading ? (
-              <ActivityIndicator size="large" color="#ff33ff" />
-            ) : (
-              <TouchableOpacity
-                style={styles.styleBtn}
-                onPress={() => this.postCategory()}>
-                <Text style={{color: 'white', fontSize: 16}}>Save</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </ScrollView>
-      </>
-    );
-  }
-}
+        <View style={styles.sectionBtn}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#ff33ff" />
+          ) : (
+            <TouchableOpacity
+              style={styles.styleBtn}
+              onPress={() => postCategory()}>
+              <Text style={{color: 'white', fontSize: 16}}>Save</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -129,10 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({category}) => {
-  return {
-    category,
-  };
-};
-
-export default connect(mapStateToProps)(InputCategory);
+export default InputCategory;

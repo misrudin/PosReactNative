@@ -1,13 +1,12 @@
 import axios from 'axios';
-const urls = 'http://52.70.29.181:4001/api/v1/';
+import {Link} from '../../env';
 
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';
+const URL = Link();
 
-export const getAllCategory = () => {
+export const getAllCategory = token => {
   return {
     type: 'GET_CATEGORY',
-    payload: axios.get(urls + 'category', {
+    payload: axios.get(URL + 'category', {
       headers: {
         token: token,
       },
@@ -15,30 +14,30 @@ export const getAllCategory = () => {
   };
 };
 
-export const addCategory = data => {
+export const addCategory = (data, token) => {
   return {
     type: 'ADD_CATEGORY',
-    payload: axios.post(urls + 'category', data, {
+    payload: axios.post(URL + 'category', data, {
       headers: {
         token: token,
       },
     }),
   };
 };
-export const deleteCategory = id => {
+export const deleteCategory = (id, token) => {
   return {
     type: 'DELETE_CATEGORY',
-    payload: axios.delete(urls + `category/${id}`, {
+    payload: axios.delete(URL + `category/${id}`, {
       headers: {
         token: token,
       },
     }),
   };
 };
-export const editCategory = data => {
+export const editCategory = (data, token) => {
   return {
     type: 'EDIT_CATEGORY',
-    payload: axios.patch(urls + `category/${data.id}`, data, {
+    payload: axios.patch(URL + `category/${data.id}`, data, {
       headers: {
         token: token,
       },
