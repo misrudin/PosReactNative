@@ -6,6 +6,7 @@ const initialValue = {
   isFulfilled: false,
   qty: 0,
   cartDetail: [],
+  total: 0,
 };
 
 const cartReducer = (state = initialValue, action) => {
@@ -26,11 +27,19 @@ const cartReducer = (state = initialValue, action) => {
         errMsg: action.payload.data,
       };
     case 'GET_CART_FULFILLED':
+      const cart = action.payload.data.result;
+
+      const newTotal = [];
+      cart.forEach(e => {
+        newTotal.push(e.qty * e.price);
+      });
+
       return {
         ...state,
         isPending: false,
         isFulfilled: true,
         cartData: action.payload.data.result,
+        total: newTotal.reduce((a, b) => a + b, 0),
       };
 
     //add product to cart
@@ -61,6 +70,12 @@ const cartReducer = (state = initialValue, action) => {
       return {
         ...state,
         qty: action.payload,
+      };
+    // count qty
+    case 'TOTAL':
+      return {
+        ...state,
+        total: action.payload,
       };
 
     // checkout all
@@ -105,7 +120,8 @@ const cartReducer = (state = initialValue, action) => {
         ...state,
         isPending: false,
         isFulfilled: true,
-        cartData: state.cartData,
+        cartData: [],
+        qty: 0,
       };
 
     //detail cart
@@ -193,11 +209,14 @@ const cartReducer = (state = initialValue, action) => {
         errMsg: action.payload.data,
       };
     case 'DELETECART_FULFILLED':
+      const dataAfterDelete = state.cartData.filter(
+        data => data.id != action.payload.data.result.id,
+      );
       return {
         ...state,
         isPending: false,
         isFulfilled: true,
-        cartData: state.cartData,
+        cartData: dataAfterDelete,
       };
     default:
       return state;

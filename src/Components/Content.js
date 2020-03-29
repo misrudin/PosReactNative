@@ -14,16 +14,16 @@ const Content = props => {
           <Text style={styles.price}>Rp. {props.data.price}</Text>
           <Text style={styles.description}>{props.data.description}</Text>
           <View style={styles.footer}>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', width: '100%'}}>
               <TouchableOpacity onPress={() => props.show(props.data)}>
-                <Icon name="edit" size={25} color="red" />
+                <Icon name="edit" size={15} color="rgb(214, 160, 13)" />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => props.delete(props.data)}>
                 <Icon
                   name="trash"
-                  size={25}
-                  color="red"
-                  style={{marginLeft: 20}}
+                  size={15}
+                  color="rgb(128, 6, 57)"
+                  style={{marginLeft: 30}}
                 />
               </TouchableOpacity>
             </View>
@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignSelf: 'center',
     width: '95%',
-    marginBottom: 5,
-    marginTop: 5,
+    marginBottom: 7,
+    marginTop: 7,
     borderRadius: 10,
     shadowOffset: {width: 5, height: 5},
     shadowColor: '#000',
@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
   },
   detail: {
     marginLeft: 8,
+    minWidth: 200,
   },
   title: {
     fontSize: 18,
@@ -76,6 +77,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     position: 'absolute',
     bottom: 0,
+    width: '100%',
   },
 });
 export default Content;

@@ -3,11 +3,11 @@ import {
   Text,
   StyleSheet,
   View,
-  ScrollView,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import {editCategory} from '../Publics/Redux/actions/category';
 import {useDispatch, useSelector} from 'react-redux';
@@ -30,12 +30,12 @@ const EditCategory = props => {
       setLoding(true);
       dispatch(editCategory(data, token)).then(() => {
         setLoding(false);
-        Alert.alert('Congratulation', 'Edit Sucess!', [{text: 'OK'}]);
+        ToastAndroid.show('Yey, Edit Category Success', ToastAndroid.SHORT);
         clear();
         props.navigation.navigate('Category');
       });
     } else {
-      Alert.alert('Warning', 'Please comlete input!', [{text: 'OK'}]);
+      ToastAndroid.show('Hmm, Please comlete input !', ToastAndroid.SHORT);
     }
   };
 
@@ -46,50 +46,65 @@ const EditCategory = props => {
 
   return (
     <>
-      <ScrollView style={styles.container}>
-        <View style={styles.sectionInput}>
-          <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
-            Category Name
-          </Text>
-          <TextInput
-            style={styles.txtInput}
-            onChangeText={e => setCategory(e)}
-            value={category}
-          />
-        </View>
+      <View style={styles.container}>
+        <View
+          style={{
+            backgroundColor: '#fff',
+            paddingHorizontal: 10,
+            paddingVertical: 20,
+            justifyContent: 'center',
+            borderRadius: 5,
+            shadowOffset: {width: 2, height: 2},
+            shadowColor: '#000',
+            shadowRadius: 10,
+            shadowOpacity: 1,
 
-        <View style={styles.sectionBtn}>
-          {loading ? (
-            <ActivityIndicator size="large" color="#ff33ff" />
-          ) : (
-            <TouchableOpacity style={styles.styleBtn} onPress={edit}>
-              <Text style={{color: 'white', fontSize: 16}}>Save</Text>
-            </TouchableOpacity>
-          )}
+            elevation: 4,
+          }}>
+          <View style={styles.sectionInput}>
+            <Text style={{color: '#020', fontWeight: 'bold', marginBottom: 5}}>
+              Category Name
+            </Text>
+            <TextInput
+              style={styles.txtInput}
+              onChangeText={e => setCategory(e)}
+              autoFocus
+              value={category}
+            />
+          </View>
+
+          <View style={styles.sectionBtn}>
+            {loading ? (
+              <ActivityIndicator size="large" color="#ff33ff" />
+            ) : (
+              <TouchableOpacity style={styles.styleBtn} onPress={edit}>
+                <Text style={{color: 'white', fontSize: 16}}>Save</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      </ScrollView>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: 20,
     flex: 1,
-    backgroundColor: '#f7f8fc',
-    paddingHorizontal: 16,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
   },
   sectionInput: {
     marginTop: 20,
-    position: 'relative',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   txtInput: {
-    flex: 1,
     backgroundColor: 'white',
     width: '100%',
     borderColor: '#ddd',
     borderWidth: 1,
-    paddingVertical: 10,
+    paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 8,
     color: '#999',
@@ -102,7 +117,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   styleBtn: {
-    backgroundColor: '#3f026b',
+    backgroundColor: '#3a7bd5',
     borderRadius: 20,
     paddingHorizontal: 50,
     paddingVertical: 15,

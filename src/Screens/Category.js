@@ -16,6 +16,7 @@ import {
 } from '../Publics/Redux/actions/category';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import _ from 'lodash';
+import {HeaderCategory} from '../Components/Header';
 
 class Category extends Component {
   constructor(props) {
@@ -26,19 +27,20 @@ class Category extends Component {
       search: '',
       refreshing: false,
       token: props.auth.token,
+      keyword: '',
     };
   }
 
-  handleDelete = id => {
+  handleDelete = data => {
     Alert.alert(
       'Sure ?',
-      'Do you want to delete this item',
+      `Do you want to delete ${data.nama_category}`,
       [
         {
           text: 'Cancel',
           style: 'cancel',
         },
-        {text: 'OK', onPress: () => this.delete(id)},
+        {text: 'OK', onPress: () => this.delete(data.id)},
       ],
       {cancelable: false},
     );
@@ -53,9 +55,10 @@ class Category extends Component {
   }
 
   delete = async id => {
-    await this.props.dispatch(deleteCategory(id, this.state.token));
-    this.setState({
-      category: this.props.category.categoryData,
+    await this.props.dispatch(deleteCategory(id, this.state.token)).then(() => {
+      this.setState({
+        category: this.props.category.categoryData,
+      });
     });
   };
 
@@ -63,77 +66,56 @@ class Category extends Component {
     this.props.navigation.navigate('EditCategory', {data: data});
   };
 
+  getData = e => {
+    this.setState({
+      keyword: e,
+    });
+  };
+
   render() {
+    let filterData = this.state.category.filter(data => {
+      return (
+        data.nama_category
+          .toLowerCase()
+          .indexOf(this.state.keyword.toLowerCase()) !== -1
+      );
+    });
     return (
-      <View style={{backgroundColor: '#fff'}}>
-        <StatusBar
-          barStyle="dark-content"
-          hidden={false}
-          backgroundColor="#fff"
-          translucent={false}
-          networkActivityIndicatorVisible={true}
+      <>
+        <HeaderCategory
+          onPress={() => this.props.navigation.navigate('InputCategory')}
+          onSearch={e => this.getData(e)}
         />
-        <View
-          style={{
-            alignItems: 'center',
-            paddingVertical: 10,
-            backgroundColor: '#fff',
-            paddingHorizontal: 16,
-            flexDirection: 'row',
-            shadowOffset: {width: 8, height: 9},
-            shadowColor: '#000',
-            shadowRadius: 10,
-            shadowOpacity: 1,
-            elevation: 8,
-          }}>
-          <TextInput
-            onChangeText={key => this.onSearch(key)}
-            placeholder="I want to search..."
-            style={{
-              flex: 1,
-              backgroundColor: '#fff',
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: '#ddd',
-              paddingVertical: 5,
-              paddingHorizontal: 20,
-              paddingLeft: 40,
-            }}
-          />
-          <Icon
-            name="search"
-            size={20}
-            color="#3f026b"
-            style={{position: 'absolute', top: 20, left: 25}}
-          />
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('InputCategory')}>
-            <Icon
-              name="plus-circle"
-              size={25}
-              color="#F4A501"
-              style={{marginHorizontal: 20}}
-            />
-          </TouchableOpacity>
-        </View>
-        <ScrollView style={{backgroundColor: '#fff'}}>
-          {this.state.category.map(data => {
-            return (
-              <ListCategory
-                key={data.id}
-                data={data}
-                onDelete={this.handleDelete}
-                edit={this.showData}
+        <View style={{backgroundColor: '#fff', flex: 1, paddingHorizontal: 20}}>
+          <ScrollView
+            style={{backgroundColor: '#fff'}}
+            showsVerticalScrollIndicator={false}>
+            {filterData.map(data => {
+              return (
+                <ListCategory
+                  key={data.id}
+                  data={data}
+                  onDelete={this.handleDelete}
+                  edit={this.showData}
+                />
+              );
+            })}
+            {!this.props.category.isPending ? null : (
+              <ActivityIndicator
+                size="large"
+                color="#ff33ff"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                }}
               />
-            );
-          })}
-          {!this.props.category.isPending ? null : (
-            <View style={{flex: 1, backgroundColor: '#fff', marginTop: '50%'}}>
-              <ActivityIndicator size="large" color="#ff33ff" />
-            </View>
-          )}
-        </ScrollView>
-      </View>
+            )}
+          </ScrollView>
+        </View>
+      </>
     );
   }
 }

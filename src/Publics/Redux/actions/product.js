@@ -43,10 +43,10 @@ export const editProduct = (id, fd, token) => {
   };
 };
 
-export const pagination = (page, token) => {
+export const pagination = (key, page, token) => {
   return {
     type: 'PAGE',
-    payload: axios.get(URL + `product?page=${page}`, {
+    payload: axios.get(URL + `product?key=${key}&page=${page}`, {
       headers: {
         token: token,
       },

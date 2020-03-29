@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -6,171 +6,160 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  StatusBar,
   ActivityIndicator,
-  Alert,
+  ToastAndroid,
 } from 'react-native';
-import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
+import {register} from '../Publics/Redux/actions/auth';
 
-class Register extends Component {
-  state = {
-    username: '',
-    password: '',
-    passwordRepeat: '',
-    msg: '',
-    loading: false,
+const Register = ({navigation}) => {
+  const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [name, setName] = useState('');
+  const dispatch = useDispatch();
+  const {isPending} = useSelector(state => state.auth);
+
+  const humanEdan = () => {
+    if (name === '') {
+      ToastAndroid.show('Username cannot be empty !', ToastAndroid.SHORT);
+      return false;
+    } else if (password === '' || password.length < 4) {
+      ToastAndroid.show(
+        'Password cannot be empty and minimum 4 of character !',
+        ToastAndroid.SHORT,
+      );
+      return false;
+    } else if (password !== password2) {
+      ToastAndroid.show('Password not same !', ToastAndroid.SHORT);
+      setPassword('');
+      setPassword2('');
+      return false;
+    } else {
+      return true;
+    }
   };
 
-  handleRegister = () => {
-    const {username, password, passwordRepeat} = this.state;
-    const data = {
-      username,
-      password,
-      role: 2,
-    };
-    if (password === passwordRepeat) {
-      this.postUser(data);
-    } else {
-      this.setState({
-        msg: 'Password Not Match!',
+  const handleSignUp = async () => {
+    if (humanEdan()) {
+      const data = {
+        username: name,
+        password,
+        role: 2,
+      };
+      dispatch(register(data)).then(res => {
+        if (res.value.data.msg) {
+          ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
+        } else {
+          ToastAndroid.show(
+            'Yeey, Register Success, Please Login!',
+            ToastAndroid.SHORT,
+          );
+          navigation.navigate('Login');
+        }
       });
     }
   };
 
-  postUser = data => {
-    if (data.username && data.password) {
-      this.setState({
-        loading: true,
-      });
-      axios
-        .post(`http://52.70.29.181:4001/api/v1/auth/register`, data)
-        .then(res => {
-          if (!res.data.result) {
-            this.setState({
-              msg: res.data.msg,
-              loading: false,
-            });
-          } else {
-            this.setState({
-              loading: false,
-            });
-            this.clear();
-            Alert.alert('Congratulation', 'Register Sucess!', [{text: 'OK'}]);
-            this.props.navigation.navigate('Login');
-          }
-        })
-        .catch(err => console.log(err));
-    } else {
-      this.setState({
-        msg: 'Please complete data!',
-      });
-    }
-  };
+  return (
+    <View
+      style={{
+        paddingHorizontal: 20,
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+      }}>
+      <View style={styles.container}>
+        <ScrollView>
+          <TextInput
+            placeholder="Username..."
+            style={styles.textInput}
+            onChangeText={e => setName(e)}
+            value={name}
+            autoCapitalize="none"
+          />
+          <TextInput
+            placeholder="Password..."
+            style={styles.textInput}
+            onChangeText={e => setPassword(e)}
+            value={password}
+            autoCapitalize="none"
+            secureTextEntry
+          />
+          <TextInput
+            placeholder="Repeat Password..."
+            style={styles.textInput}
+            onChangeText={e => setPassword2(e)}
+            value={password2}
+            autoCapitalize="none"
+            secureTextEntry
+          />
 
-  clear = () => {
-    this.setState({
-      username: '',
-      password: '',
-      passwordRepeat: '',
-      msg: '',
-    });
-  };
-
-  render() {
-    return (
-      <ScrollView style={{flex: 1, backgroundColor: '#085366'}}>
-        <StatusBar
-          // barStyle="dark-content"
-          hidden={false}
-          backgroundColor="#085366"
-          translucent={false}
-          networkActivityIndicatorVisible={true}
-        />
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: '#085366',
-            justifyContent: 'center',
-          }}>
-          <View style={{height: 200, backgroundColor: '#085366'}}>
-            {/* <Text>nantinya gambar Juga</Text> */}
-          </View>
-          {/* <View style={{ justifyContent: 'center', alignItems: "center" }} >
-                        <Text style={{ fontSize: 30, fontWeight: "bold", color: 'grey' }}>Register</Text>
-                    </View> */}
-          <Text style={{textAlign: 'center', color: 'salmon', fontSize: 14}}>
-            {this.state.msg}
-          </Text>
-          <View style={{paddingHorizontal: 16}}>
-            <TextInput
-              onChangeText={e => this.setState({username: e})}
-              value={this.state.username}
-              placeholder="Username..."
-              style={styles.textInput}
-              keyboardType="email-address"
-            />
-            <TextInput
-              onChangeText={e => this.setState({password: e})}
-              value={this.state.password}
-              placeholder="Password..."
-              style={styles.textInput}
-              secureTextEntry={true}
-            />
-            <TextInput
-              onChangeText={e => this.setState({passwordRepeat: e})}
-              value={this.state.passwordRepeat}
-              placeholder="Repeat password..."
-              style={styles.textInput}
-              secureTextEntry={true}
-            />
-          </View>
-          <View style={{marginTop: 20, marginHorizontal: 16}}>
-            {this.state.loading ? (
-              <ActivityIndicator size="large" color="#ff33ff" />
-            ) : (
-              <TouchableOpacity onPress={this.handleRegister}>
-                <View style={styles.btn}>
-                  <Text
-                    style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>
-                    Register
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity style={{marginTop: 20, alignItems: 'center'}}>
-              <Text
-                style={{color: '#F4A501', fontWeight: 'bold', fontSize: 16}}
-                onPress={() => {
-                  this.props.navigation.navigate('Login');
-                }}>
-                Back To Login
-              </Text>
+          {!isPending ? (
+            <TouchableOpacity
+              style={styles.login}
+              onPress={() => handleSignUp()}>
+              <Text style={styles.txtLogin}>Register</Text>
             </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    );
-  }
-}
+          ) : (
+            <TouchableOpacity style={styles.login}>
+              <ActivityIndicator size="small" color="white" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.register}
+            onPress={() => navigation.navigate('Login')}>
+            <Text style={{color: '#3a7bd5', fontWeight: 'bold'}}>
+              Arealy have account? Back To Login
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   textInput: {
-    backgroundColor: 'white',
-    paddingVertical: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    color: 'grey',
-    borderRadius: 4,
-    marginTop: 10,
-    paddingLeft: 40,
-    paddingRight: 20,
-    borderColor: '#222526',
+    borderColor: '#ddd',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    marginBottom: 5,
+    backgroundColor: '#f7f9fc',
+    fontSize: 16,
   },
-  btn: {
-    backgroundColor: '#F4A501',
+  container: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    justifyContent: 'center',
+    borderRadius: 5,
+    shadowOffset: {width: 2, height: 2},
+    shadowColor: '#000',
+    shadowRadius: 10,
+    shadowOpacity: 1,
+
+    elevation: 4,
+  },
+  login: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 50,
+    backgroundColor: '#3a7bd5',
+    marginTop: 20,
+  },
+  txtLogin: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  register: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    padding: 15,
+    marginTop: 15,
   },
 });
 

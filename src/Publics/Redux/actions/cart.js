@@ -6,12 +6,7 @@ const URL = Link();
 export const getAllCart = token => {
   return {
     type: 'GET_CART',
-    payload: axios.get(URL + `cart`, {
-      headers: {
-        token: token,
-      },
-    }),
-    payloadQty: axios.get(URL + `cart/qty`, {
+    payload: axios.get(URL + 'cart', {
       headers: {
         token: token,
       },
@@ -63,12 +58,12 @@ export const deleteCart = (id_cart, token) => {
   };
 };
 
-export const getDetail = faktur => {
+export const getDetail = (faktur, token) => {
   return {
     type: 'DETAIL',
     payload: axios.get(URL + `payment?faktur=${faktur}`, {
       headers: {
-        token: localStorage.getItem('Token'),
+        token: token,
       },
     }),
   };
@@ -99,5 +94,12 @@ export const getQty = qty => {
   return {
     type: 'QTY',
     payload: qty,
+  };
+};
+
+export const getTotal = total => {
+  return {
+    type: 'TOTAL',
+    payload: total,
   };
 };

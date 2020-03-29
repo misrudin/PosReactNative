@@ -7,8 +7,9 @@ import Category from '../../Screens/Category';
 import Acount from '../../Screens/Acount';
 import Loading from '../../Screens/Loading';
 import InputProduct from '../../Screens/InputProduct';
-import History from '../../Screens/History';
+import {History} from '../../Screens/History';
 import InputCategory from '../../Screens/InputCategory';
+import Cart from '../../Screens/Cart';
 import EditCategory from '../../Components/EditCategory';
 import EditProduct from '../../Components/EditProduct';
 
@@ -24,6 +25,7 @@ const MainNavigators = () => {
   return (
     <>
       <Tab.Navigator
+        backBehavior="none"
         tabBarOptions={{
           activeTintColor: '#fff',
           activeBackgroundColor: '#3a7bd5',
@@ -36,7 +38,6 @@ const MainNavigators = () => {
           component={Home}
           options={{
             tabBarLabel: 'Home',
-            unmountOnBlur: true,
             tabBarIcon: ({color, size}) => (
               <Icon name="home" size={22} color="#D39D38" />
             ),
@@ -70,16 +71,6 @@ const MainNavigators = () => {
             tabBarLabel: 'History',
             tabBarIcon: ({color, size}) => (
               <Icon name="history" size={24} color="#D39D38" />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Acount"
-          component={Acount}
-          options={{
-            tabBarLabel: 'Acount',
-            tabBarIcon: ({color, size}) => (
-              <Icon name="user" size={24} color="#D39D38" />
             ),
           }}
         />
@@ -121,17 +112,35 @@ const AuthNav = () => {
             <Stack.Screen
               name="InputCategory"
               component={InputCategory}
-              options={{headerShown: true}}
+              options={{headerShown: true, title: 'Add Category'}}
             />
             <Stack.Screen
               name="EditCategory"
               component={EditCategory}
-              options={{headerShown: true}}
+              options={{headerShown: true, title: 'Add Category'}}
             />
             <Stack.Screen
               name="EditProduct"
               component={EditProduct}
-              options={{headerShown: true}}
+              options={{
+                headerShown: true,
+                animationEnabled: true,
+                title: 'Edit Product',
+              }}
+            />
+            <Stack.Screen
+              name="Acount"
+              component={Acount}
+              options={{headerShown: true, title: 'My Account'}}
+            />
+            <Stack.Screen
+              name="Cart"
+              component={Cart}
+              options={{
+                headerShown: true,
+                animationEnabled: false,
+                title: 'Cart',
+              }}
             />
           </>
         )}

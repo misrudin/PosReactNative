@@ -16,14 +16,13 @@ import {
   checkOutAll,
   deleteAll,
   deleteCart,
-  getQty,
+  getDetail,
 } from '../Publics/Redux/actions/cart';
+import {getAllProduct} from '../Publics/Redux/actions/product';
 import axios from 'axios';
-const urls = 'http://52.70.29.181:4001/api/v1/';
+import {Link} from '../Publics/env';
+const urls = Link();
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import AsyncStorage from '@react-native-community/async-storage';
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxMCwidXNlcm5hbWUiOiJ1ZGluIiwicm9sZSI6MSwiaWF0IjoxNTgyNDAzMTc0fQ.Q7I9gI3WfX0EjCua3fjsUdSe2hCwV1ztK3bj_Db2Cbc';
 
 class Cart extends Component {
   state = {
@@ -35,74 +34,48 @@ class Cart extends Component {
       total: '',
     },
     qty: 0,
-    total: 0,
-    id_user: '',
+    total: this.props.cart.total,
+    id_user: '10',
     show: false,
+    token: this.props.auth.token,
+    detailCart: [],
   };
 
   hide = async () => {
     this.setState({
       show: false,
     });
-    await this.props.navigation.navigate('Home');
-  };
-  sendQty = () => {
-    const cart = this.props.cart.cartData;
-    const newQty = [];
-    cart.forEach(e => {
-      newQty.push(e.qty);
-    });
-    this.setState({
-      qty: newQty.reduce((a, b) => a + b, 0),
-    });
-
-    const newTotal = [];
-    cart.forEach(e => {
-      newTotal.push(e.qty * e.price);
-    });
-    this.setState({
-      total: newTotal.reduce((a, b) => a + b, 0),
-    });
-
-    this.props.dispatch(getQty(this.state.qty));
+    this.props.navigation.navigate('Home');
   };
 
   getCart = async () => {
-    await this.props.dispatch(getAllCart());
+    await this.props.dispatch(getAllCart(this.state.token));
     this.setState({
       cart: this.props.cart.cartData,
     });
-    await this.sendQty();
+  };
+
+  getDetailCart = async () => {
+    const data = this.state.formCheckOut;
+    await this.props.dispatch(getDetail(data.faktur, this.state.token));
+    this.setState({
+      detailCart: this.props.cart.cartDetail,
+      show: true,
+    });
   };
 
   okeCheckout = async () => {
     const data = this.state.formCheckOut;
-    await this.props.dispatch(checkOutAll(data)).then(() => {
-      Alert.alert(
-        'Congratulation',
-        'Checkout Success',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {text: 'OK', onPress: () => this.props.navigation.navigate('Home')},
-        ],
-        {cancelable: true},
-      );
+    await this.props.dispatch(checkOutAll(data, this.state.token)).then(() => {
+      this.getDetailCart();
     });
-    await this.sendQty();
-
-    // this.setState({
-    //   show: true,
-    // });
   };
 
   handleCheckout = () => {
     const newCheckOut = {...this.state.formCheckOut};
     newCheckOut.faktur = new Date().getTime();
     newCheckOut.id_user = this.state.id_user;
-    newCheckOut.qty = this.state.cart.length;
+    newCheckOut.qty = this.props.cart.qty;
     newCheckOut.total = this.state.total;
     this.setState(
       {
@@ -141,93 +114,154 @@ class Cart extends Component {
   };
 
   deleteOk = async () => {
-    await this.props.dispatch(deleteAll());
-    await this.sendQty();
+    await this.props.dispatch(deleteAll(this.state.token));
     this.props.navigation.navigate('Home');
   };
 
-  addQty = async id => {
+  addQty = async data => {
     axios
-      .patch(urls + `cart/add/${id}`, {
+      .patch(urls + `cart/add/${data.id}`, {
         headers: {
-          token: token,
+          token: this.state.token,
         },
       })
-      .then(async () => {
-        await this.sendQty();
-      });
+      .then(() =>
+        this.setState({
+          total: this.state.total + data.price,
+        }),
+      );
   };
-  minQty = async (id, qty) => {
+  minQty = async data => {
     axios
-      .patch(urls + `cart/min/${id}`, {
+      .patch(urls + `cart/min/${data.id}`, {
         headers: {
-          token: token,
+          token: this.state.token,
         },
       })
-      .then(async () => {
-        await this.sendQty();
+      .then(() =>
+        this.setState({
+          total: this.state.total - data.price,
+        }),
+      );
+  };
+
+  minDel = async (data, qty) => {
+    await this.props
+      .dispatch(deleteCart(data.id, this.state.token))
+      .then(() => {
+        this.setState({
+          cart: this.props.cart.cartData,
+          total: this.state.total - data.price * qty,
+        });
       });
   };
 
-  minDel = async id => {
-    await this.props.dispatch(deleteCart(id)).then(() => {
-      this.setState({
-        cart: this.props.cart.cartData,
-      });
-    });
-    await this.sendQty();
-  };
-
-  getToken = async () => {
-    await AsyncStorage.getItem('id', (err, id) => {
-      this.setState({
-        id_user: id,
-      });
-    });
-  };
   componentDidMount() {
     this.getCart();
-    this.getToken();
+    this.props.dispatch(getAllProduct(this.state.token));
   }
 
   render() {
     return (
-      <View style={{backgroundColor: 'white', flex: 1}}>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.show}
-          onRequestClose={() => this.hide()}>
-          <ScrollView
-            style={{
-              backgroundColor: '#fff',
-              flex: 1,
-              padding: 40,
-            }}>
-            <View style={{flex: 1}}>
-              <Text style={{color: '#000'}}>Product</Text>
+      <>
+        <View style={{backgroundColor: 'white', flex: 1}}>
+          <Modal
+            animationType="slide"
+            visible={this.state.show}
+            onRequestClose={() => this.hide()}>
+            <View style={{flex: 1, paddingHorizontal: 20, paddingTop: 10}}>
+              <View style={styles.list}>
+                <Icon
+                  name="user"
+                  size={15}
+                  color="#fff"
+                  style={{marginRight: 10}}
+                />
+                <Text style={styles.text}>Udin</Text>
+              </View>
+              <View style={[styles.list, {marginTop: -10}]}>
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    color: '#fff',
+                    marginRight: 10,
+                  }}>
+                  #
+                </Text>
+                <Text style={styles.text}>
+                  {this.state.formCheckOut.faktur}
+                </Text>
+              </View>
+              <ScrollView
+                style={{backgroundColor: '#fff'}}
+                showsVerticalScrollIndicator={false}>
+                {this.state.detailCart.map((data, i) => {
+                  return <Item key={i} data={data} />;
+                })}
+              </ScrollView>
             </View>
 
-            <TouchableOpacity
-              onPress={this.hide}
-              style={{alignItems: 'center'}}>
-              <Text
-                style={{
-                  color: 'white',
-                  fontSize: 'bold',
-                  fontSize: 16,
-                  backgroundColor: '#3f026b',
-                  borderRadius: 8,
-                  padding: 10,
-                }}>
-                Close
-              </Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </Modal>
-        <ScrollView style={{backgroundColor: '#FFF', flex: 1}}>
-          {!this.props.cart.isPending ? (
-            this.state.cart.length < 1 ? (
+            <View
+              style={{
+                backgroundColor: '#fff',
+                shadowOffset: {width: 2, height: 5},
+                shadowColor: '#000',
+                shadowRadius: 2,
+                shadowOpacity: 1,
+                elevation: 4,
+                paddingVertical: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View style={{paddingHorizontal: 20}}>
+                <Text style={{marginVertical: 2}}>
+                  Ppn 10% : Rp. {(this.state.formCheckOut.total * 10) / 100}
+                </Text>
+                <Text style={{marginVertical: 2}}>
+                  Total : Rp.{' '}
+                  {(this.state.formCheckOut.total * 10) / 100 +
+                    this.state.formCheckOut.total}
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', paddingVertical: 10}}>
+                <TouchableOpacity
+                  onPress={this.hide}
+                  style={{alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      backgroundColor: 'rgb(13, 134, 214)',
+                      borderRadius: 8,
+                      padding: 10,
+                      marginRight: 30,
+                    }}>
+                    Send Email
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={this.hide}
+                  style={{alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      backgroundColor: 'rgb(128, 6, 57)',
+                      borderRadius: 8,
+                      padding: 10,
+                    }}>
+                    Close
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{paddingHorizontal: 20}}>
+            {this.state.cart.length < 1 ? (
               <View
                 style={{
                   justifyContent: 'center',
@@ -237,10 +271,15 @@ class Cart extends Component {
                 <Icon
                   name="shopping-bag"
                   size={80}
-                  color="#3f026b"
+                  color="rgb(128, 6, 57)"
                   style={{justifyContent: 'center'}}
                 />
-                <Text style={{color: '#3f026b'}}>Your cart is Empty!</Text>
+                <Text style={{color: 'rgb(128, 6, 57)', fontSize: 16}}>
+                  Your cart is Empty!
+                </Text>
+                <Text style={{color: '#acacac', fontSize: 12}}>
+                  Click image product to add
+                </Text>
               </View>
             ) : (
               this.state.cart.map(data => {
@@ -254,48 +293,71 @@ class Cart extends Component {
                   />
                 );
               })
-            )
-          ) : (
-            <View style={{flex: 1, backgroundColor: '#fff', marginTop: '50%'}}>
-              <ActivityIndicator size="large" color="#ff33ff" />
-            </View>
-          )}
-        </ScrollView>
+            )}
+          </ScrollView>
+        </View>
         {!this.state.cart.length < 1 ? (
-          <View style={styles.foot}>
-            <TouchableOpacity
-              style={styles.footer}
-              onPress={() => this.handleCheckout()}>
-              <Text
+          <>
+            <View style={styles.containerFooter}>
+              <View
                 style={{
-                  color: 'white',
-                  fontSize: 'bold',
-                  fontSize: 16,
-                  backgroundColor: '#3f026b',
-                  borderRadius: 8,
-                  padding: 10,
+                  paddingVertical: 2,
+                  flexDirection: 'row',
                 }}>
-                Checkout
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.footer}
-              onPress={() => this.deleteAll()}>
-              <Text
-                style={{
-                  color: 'white',
-                  fontSize: 'bold',
-                  fontSize: 16,
-                  backgroundColor: '#c7040e',
-                  borderRadius: 8,
-                  padding: 10,
-                }}>
-                Cancel Transaction
-              </Text>
-            </TouchableOpacity>
-          </View>
+                <Text>Total : Rp. {this.state.total} </Text>
+                <Text style={{color: '#acacac', fontSize: 12}}>
+                  *Belum termasuk ppn.
+                </Text>
+              </View>
+              <View style={styles.foot}>
+                <TouchableOpacity
+                  style={styles.footer}
+                  onPress={() => this.handleCheckout()}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      backgroundColor: 'rgb(13, 134, 214)',
+                      borderRadius: 8,
+                      padding: 10,
+                    }}>
+                    Checkout
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.footer}
+                  onPress={() => this.deleteAll()}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 16,
+                      backgroundColor: 'rgb(128, 6, 57)',
+                      borderRadius: 8,
+                      padding: 10,
+                    }}>
+                    Cancel Transaction
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
         ) : null}
-      </View>
+        {this.props.cart.isPending ? (
+          <ActivityIndicator
+            size="large"
+            color="#ff33ff"
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}
+          />
+        ) : null}
+      </>
     );
   }
 }
@@ -307,19 +369,60 @@ const styles = StyleSheet.create({
   foot: {
     alignItems: 'center',
     paddingVertical: 20,
-    backgroundColor: 'white',
+
     paddingHorizontal: 20,
     flexDirection: 'row',
-    borderTopColor: '#ddd',
-    borderTopWidth: 1,
     justifyContent: 'center',
+  },
+  containerFooter: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    shadowOffset: {width: 2, height: 5},
+    shadowColor: '#000',
+    shadowRadius: 2,
+    shadowOpacity: 1,
+    elevation: 4,
+  },
+  list: {
+    // backgroundColor: 'rgb(13, 134, 214)',
+    backgroundColor: '#333',
+    paddingVertical: 15,
+    marginVertical: 3,
+    paddingHorizontal: 10,
+    borderRadius: 4,
+    flexDirection: 'row',
+  },
+
+  text: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
-const mapStateToProps = ({cart}) => {
+const mapStateToProps = ({cart, auth, product}) => {
   return {
     cart,
+    auth,
+    product,
   };
 };
 
 export default connect(mapStateToProps)(Cart);
+
+const Item = props => {
+  return (
+    <View
+      style={[
+        styles.list,
+        {
+          backgroundColor: 'rgb(13, 134, 214)',
+          justifyContent: 'space-between',
+        },
+      ]}>
+      <Text style={styles.text}>
+        {props.data.name} {props.data.qtyDetail}x
+      </Text>
+      <Text style={styles.text}>Rp. {props.data.totalDetail}</Text>
+    </View>
+  );
+};

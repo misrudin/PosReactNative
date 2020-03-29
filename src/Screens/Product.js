@@ -133,9 +133,9 @@ class Product extends Component {
     return (
       <View style={{backgroundColor: 'white', flex: 1}}>
         <StatusBar
-          barStyle="light-content"
+          barStyle="dark-content"
           hidden={false}
-          backgroundColor="#3f026b"
+          backgroundColor="#fff"
           translucent={false}
           networkActivityIndicatorVisible={true}
         />

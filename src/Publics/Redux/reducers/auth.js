@@ -53,7 +53,7 @@ const userReducer = (state = initialValue, action) => {
         ...state,
         isPending: false,
         isFulfilled: true,
-        token: action.payload.data.token,
+        dataUser: action.payload.data.result,
       };
     case 'TOKEN':
       if (action.payload !== null) {
@@ -70,49 +70,7 @@ const userReducer = (state = initialValue, action) => {
           token: null,
         };
       }
-    case 'ID_PENDING':
-      return {
-        ...state,
-        isPending: true,
-        isRejected: false,
-        isFulfilled: false,
-      };
-    case 'ID_REJECTED':
-      return {
-        ...state,
-        isPending: false,
-        isRejected: true,
-        errMsg: action.payload.data,
-      };
-    case 'ID_FULFILLED':
-      return {
-        ...state,
-        isPending: false,
-        isFulfilled: true,
-        datalogin: action.payload.data,
-        dataUser: action.payload.data.result,
-      };
-    case 'ROLE_PENDING':
-      return {
-        ...state,
-        isPending: true,
-        isRejected: false,
-        isFulfilled: false,
-      };
-    case 'ROLE_REJECTED':
-      return {
-        ...state,
-        isPending: false,
-        isRejected: true,
-        errMsg: action.payload.data,
-      };
-    case 'ROLE_FULFILLED':
-      return {
-        ...state,
-        isPending: false,
-        isFulfilled: true,
-        dataUser: action.payload.data.result,
-      };
+
     default:
       return state;
   }
