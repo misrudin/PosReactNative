@@ -17,6 +17,7 @@ import {
   deleteAll,
   deleteCart,
   getDetail,
+  getQty,
 } from '../Publics/Redux/actions/cart';
 import {getAllProduct} from '../Publics/Redux/actions/product';
 import axios from 'axios';
@@ -49,10 +50,25 @@ class Cart extends Component {
   };
 
   getCart = async () => {
-    await this.props.dispatch(getAllCart(this.state.token));
-    this.setState({
-      cart: this.props.cart.cartData,
+    await this.props.dispatch(getAllCart(this.state.token)).then(() => {
+      this.setState({
+        cart: this.props.cart.cartData,
+      });
+      this.sendQty();
     });
+  };
+
+  sendQty = () => {
+    const cart = this.props.cart.cartData;
+    const newQty = [];
+    cart.forEach(e => {
+      newQty.push(e.qty);
+    });
+    this.setState({
+      qty: newQty.reduce((a, b) => a + b, 0),
+    });
+
+    this.props.dispatch(getQty(this.state.qty));
   };
 
   getDetailCart = async () => {
@@ -72,29 +88,37 @@ class Cart extends Component {
   };
 
   handleCheckout = () => {
-    const newCheckOut = {...this.state.formCheckOut};
-    newCheckOut.faktur = new Date().getTime();
-    newCheckOut.id_user = this.state.id_user;
-    newCheckOut.qty = this.props.cart.qty;
-    newCheckOut.total = this.state.total;
-    this.setState(
-      {
-        formCheckOut: newCheckOut,
-      },
-      () => {
-        Alert.alert(
-          'Checkout',
-          'Click OK to continue transaction!',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {text: 'OK', onPress: () => this.okeCheckout()},
-          ],
-          {cancelable: false},
-        );
-      },
+    Alert.alert(
+      'Checkout',
+      'Click OK to continue transaction!',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            await this.props.dispatch(getAllCart(this.state.token)).then(() => {
+              this.sendQty();
+              const newCheckOut = {...this.state.formCheckOut};
+              newCheckOut.faktur = new Date().getTime();
+              newCheckOut.id_user = this.state.id_user;
+              newCheckOut.qty = this.props.cart.qty;
+              newCheckOut.total = this.state.total;
+              this.setState(
+                {
+                  formCheckOut: newCheckOut,
+                },
+                () => {
+                  this.okeCheckout();
+                },
+              );
+            });
+          },
+        },
+      ],
+      {cancelable: false},
     );
   };
 
@@ -125,11 +149,11 @@ class Cart extends Component {
           token: this.state.token,
         },
       })
-      .then(() =>
+      .then(() => {
         this.setState({
           total: this.state.total + data.price,
-        }),
-      );
+        });
+      });
   };
   minQty = async data => {
     axios
@@ -138,21 +162,27 @@ class Cart extends Component {
           token: this.state.token,
         },
       })
-      .then(() =>
+      .then(() => {
         this.setState({
           total: this.state.total - data.price,
-        }),
-      );
+        });
+      });
   };
 
   minDel = async (data, qty) => {
     await this.props
       .dispatch(deleteCart(data.id, this.state.token))
       .then(() => {
-        this.setState({
-          cart: this.props.cart.cartData,
-          total: this.state.total - data.price * qty,
-        });
+        if (qty !== undefined) {
+          this.setState({
+            cart: this.props.cart.cartData,
+            total: this.state.total - data.price * qty,
+          });
+        } else {
+          this.setState({
+            cart: this.props.cart.cartData,
+          });
+        }
       });
   };
 

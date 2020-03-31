@@ -22,10 +22,13 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const MainNavigators = () => {
+  const back = () => {
+    alert('totlot');
+  };
   return (
     <>
       <Tab.Navigator
-        backBehavior="none"
+        backBehavior={back}
         tabBarOptions={{
           activeTintColor: '#fff',
           activeBackgroundColor: '#3a7bd5',

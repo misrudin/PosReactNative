@@ -21,16 +21,16 @@ const Register = ({navigation}) => {
 
   const humanEdan = () => {
     if (name === '') {
-      ToastAndroid.show('Username cannot be empty !', ToastAndroid.SHORT);
+      ToastAndroid.show('Hmm, Username cannot be empty !', ToastAndroid.SHORT);
       return false;
     } else if (password === '' || password.length < 4) {
       ToastAndroid.show(
-        'Password cannot be empty and minimum 4 of character !',
+        'Hmm, Password cannot be empty and minimum 4 of character !',
         ToastAndroid.SHORT,
       );
       return false;
     } else if (password !== password2) {
-      ToastAndroid.show('Password not same !', ToastAndroid.SHORT);
+      ToastAndroid.show('Hmm, Password not same !', ToastAndroid.SHORT);
       setPassword('');
       setPassword2('');
       return false;
@@ -46,17 +46,21 @@ const Register = ({navigation}) => {
         password,
         role: 2,
       };
-      dispatch(register(data)).then(res => {
-        if (res.value.data.msg) {
-          ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
-        } else {
-          ToastAndroid.show(
-            'Yeey, Register Success, Please Login!',
-            ToastAndroid.SHORT,
-          );
-          navigation.navigate('Login');
-        }
-      });
+      dispatch(register(data))
+        .then(res => {
+          if (res.value.data.msg) {
+            ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
+          } else {
+            ToastAndroid.show(
+              'Yeey, Register Success, Please Login!',
+              ToastAndroid.SHORT,
+            );
+            navigation.navigate('Login');
+          }
+        })
+        .catch(() => {
+          ToastAndroid.show('Opss, Error Connection', ToastAndroid.SHORT);
+        });
     }
   };
 

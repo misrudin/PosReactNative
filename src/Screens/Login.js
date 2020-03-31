@@ -23,10 +23,10 @@ const Login = ({navigation}) => {
 
   const humanEdan = () => {
     if (username === '') {
-      ToastAndroid.show('Username cannot be empty !', ToastAndroid.SHORT);
+      ToastAndroid.show('Hmm, Username cannot be empty !', ToastAndroid.SHORT);
       return false;
     } else if (password === '') {
-      ToastAndroid.show('Password cannot be empty !', ToastAndroid.SHORT);
+      ToastAndroid.show('Hmm, Password cannot be empty !', ToastAndroid.SHORT);
       return false;
     } else {
       return true;
@@ -39,13 +39,17 @@ const Login = ({navigation}) => {
         username,
         password,
       };
-      dispatch(login(data)).then(res => {
-        if (res.value.data.msg) {
-          ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
-        } else {
-          saveMyToken(res.value.data.token);
-        }
-      });
+      dispatch(login(data))
+        .then(res => {
+          if (res.value.data.msg) {
+            ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
+          } else {
+            saveMyToken(res.value.data.token);
+          }
+        })
+        .catch(() => {
+          ToastAndroid.show('Opss, Error Connection', ToastAndroid.SHORT);
+        });
     }
   };
 
@@ -59,7 +63,7 @@ const Login = ({navigation}) => {
       }}>
       <View style={styles.container}>
         <TextInput
-          placeholder="Email..."
+          placeholder="Username..."
           style={styles.textInput}
           onChangeText={e => setUsername(e)}
           keyboardType={'email-address'}

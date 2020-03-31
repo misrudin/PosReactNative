@@ -11,7 +11,7 @@ class ListCategory extends React.Component {
             <Text style={{fontWeight: 'bold', fontSize: 16, color: '#333'}}>
               {this.props.data.nama_category}
             </Text>
-            <Text style={{color: '#777'}}>20 item</Text>
+            {/* <Text style={{color: '#777'}}>20 item</Text> */}
             <Text style={{color: '#ddd'}}>Click to Edit..</Text>
           </TouchableOpacity>
         </View>

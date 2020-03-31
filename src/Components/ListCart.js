@@ -44,7 +44,6 @@ const ListCart = props => {
   };
 
   const minQty = async data => {
-    let id = data.id;
     let newQty = {...cart};
     newQty.qty = newQty.qty - 1;
     let qty = cart.qty - 1;
@@ -55,10 +54,15 @@ const ListCart = props => {
         [
           {
             text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
           },
-          {text: 'OK', onPress: () => props.minDel(data)},
+          {
+            text: 'OK',
+            onPress: () => {
+              props.min(data);
+              props.minDel(data);
+            },
+          },
         ],
         {cancelable: false},
       );
@@ -108,7 +112,7 @@ const ListCart = props => {
       <View style={styles.sectionright}>
         <TouchableOpacity
           style={{marginRight: 10}}
-          onPress={() => props.minDel(props.data,cart.qty)}>
+          onPress={() => props.minDel(props.data, cart.qty)}>
           <Icon name="trash" size={15} color="rgb(128, 6, 57)" />
         </TouchableOpacity>
       </View>

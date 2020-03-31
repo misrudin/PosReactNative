@@ -3,6 +3,12 @@ import {Link} from '../../env';
 
 const URL = Link();
 
+export const getAllUser = () => {
+  return {
+    type: 'USER',
+    payload: axios.get(URL + 'auth/user'),
+  };
+};
 export const register = data => {
   return {
     type: 'REGISTER',

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Modal,
+  ToastAndroid,
 } from 'react-native';
 import axios from 'axios';
 import {Link} from '../Publics/env';
@@ -28,9 +29,11 @@ export const History = props => {
   const dispatch = useDispatch();
 
   const showData = faktur => {
+    setLoading(true);
     setF(faktur);
     dispatch(getDetail(faktur, token)).then(() => {
       setShow(true);
+      setLoading(false);
     });
   };
 
@@ -59,6 +62,10 @@ export const History = props => {
       .then(res => {
         setAll(res.data.result);
         // console.warn(res);
+        setLoading(false);
+      })
+      .catch(() => {
+        ToastAndroid.show('Opss, Error Connection', ToastAndroid.SHORT);
         setLoading(false);
       });
   };

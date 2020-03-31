@@ -28,6 +28,7 @@ class Home extends Component {
       product: this.props.product.productData[2],
       page: 1,
       category: this.props.category.categoryData,
+      cart: this.props.cart.cartData,
       qty: 0,
       formCart: {
         id_user: '',
@@ -43,6 +44,12 @@ class Home extends Component {
 
   getProduct = async () => {
     this.setState({loading: true});
+    this.props.dispatch(getAllCart(this.state.token)).then(() => {
+      this.sendQty();
+      this.setState({
+        cart: this.props.cart.cartData,
+      });
+    });
     await this.props
       .dispatch(pagination(this.state.key, this.state.page, this.state.token))
       .then(() => {
@@ -82,9 +89,12 @@ class Home extends Component {
 
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.props.dispatch(getAllCart(this.state.token)).then(() => {
-        this.sendQty();
-      });
+      // this.props.dispatch(getAllCart(this.state.token)).then(() => {
+      //   this.sendQty();
+      //   this.setState({
+      //     cart: this.props.cart.cartData,
+      //   });
+      // });
       this.props.dispatch(getAllCategory(this.state.token)).then(() => {
         this.setState({
           category: this.props.category.categoryData,
@@ -118,9 +128,7 @@ class Home extends Component {
           await this.props
             .dispatch(addProductToCart(data, this.state.token))
             .then(() => {
-              this.props.dispatch(getAllCart(this.state.token)).then(() => {
-                this.sendQty();
-              });
+              this.props.dispatch(getQty(this.props.cart.qty + 1));
             });
         },
       );
@@ -216,6 +224,7 @@ class Home extends Component {
                   press={this.addToCart}
                   show={this.showdata}
                   delete={data => this.deletedata(data)}
+                  dataCart={this.state.cart}
                 />
               )}
               keyExtractor={item => item.id.toString()}
