@@ -3,6 +3,23 @@
 		background-color: #f7f9fc;
 		scroll-behavior: smooth;
 	}
+
+		/* width */
+	::-webkit-scrollbar {
+	  width: 5px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+	  /* box-shadow: inset 0 0 5px grey; */
+	  border-radius: 2px;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+	  background: rgb(119, 8, 194);
+	  /* border-radius: 10px; */
+	}
 	.demo{
 		padding: 5px;
 		display: grid;
@@ -66,25 +83,27 @@
 		<li><a href="#run">How To Run</a></li>
 		<li><a href="#screenshoot">screenshoot</a></li>
 		<li><a href="#project">related project</a></li>
-		<li class="app"><a href="http://localhost:3000" target="_blank">go to app</a></li>
+		<li class="app"><a href="http://localhost:3000" target="_blank">download App</a></li>
 	</ul>
 </div>
 
 
 <section id="home">
 	
-<h1 align="center">Hayuu Cafe Front-end</h1>
+<h1 align="center">Hayuu Cafe Mobile</h1>
 
-Hayuu cafe is an application to manage sales at hayuu cafe, build with ReactJS.
+Aplication for manage sales at hayuu cafe in mobile version, build with React Native.
 </section>
 
 <section id="requirements">
 	
 ## Requirements
 * [`npm`](https://www.npmjs.com/get-npm)
-* [`React Js`](https://www.npmjs.com/get-npm)
-* [`react-bootsrap`](https://www.npmjs.com/get-npm)
-* [`sweetalert`](https://www.npmjs.com/get-npm)
+* [`React Native`](https://www.npmjs.com/get-npm)
+* JDK
+* SDK
+* Android Emulator or Android Devices
+* Android Studio
 </section>
 
 <section id="run">
