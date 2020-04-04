@@ -1,3 +1,10 @@
+<section id="home">
+	
+<h1 align="center">Hayuu Cafe Mobile</h1>
+
+Aplication for manage sales at hayuu cafe in mobile version, build with React Native.
+</section>
+
 <div class="header">
 	<ul>
 		<li><a href="#requirements">Requirements</a></li>
@@ -7,14 +14,6 @@
 		<li class="app"><a href="https://drive.google.com/file/d/16QpoJe794GxwuocDbEAUHa3jMkN-QFQ4/view?usp=sharing" target="_blank">download App</a></li>
 	</ul>
 </div>
-
-
-<section id="home">
-	
-<h1 align="center">Hayuu Cafe Mobile</h1>
-
-Aplication for manage sales at hayuu cafe in mobile version, build with React Native.
-</section>
 
 <section id="requirements">
 	
