@@ -46,21 +46,17 @@ const Register = ({navigation}) => {
         password,
         role: 2,
       };
-      dispatch(register(data))
-        .then(res => {
-          if (res.value.data.msg) {
-            ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
-          } else {
-            ToastAndroid.show(
-              'Yeey, Register Success, Please Login!',
-              ToastAndroid.SHORT,
-            );
-            navigation.navigate('Login');
-          }
-        })
-        .catch(() => {
-          ToastAndroid.show('Opss, Error Connection', ToastAndroid.SHORT);
-        });
+      dispatch(register(data)).then(res => {
+        if (res.value.data.msg) {
+          ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
+        } else {
+          ToastAndroid.show(
+            'Yeey, Register Success, Please Login!',
+            ToastAndroid.SHORT,
+          );
+          navigation.navigate('Login');
+        }
+      });
     }
   };
 

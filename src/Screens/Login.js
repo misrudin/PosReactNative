@@ -39,17 +39,13 @@ const Login = ({navigation}) => {
         username,
         password,
       };
-      dispatch(login(data))
-        .then(res => {
-          if (res.value.data.msg) {
-            ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
-          } else {
-            saveMyToken(res.value.data.token);
-          }
-        })
-        .catch(() => {
-          ToastAndroid.show('Opss, Error Connection', ToastAndroid.SHORT);
-        });
+      dispatch(login(data)).then(res => {
+        if (res.value.data.msg) {
+          ToastAndroid.show(res.value.data.msg, ToastAndroid.SHORT);
+        } else {
+          saveMyToken(res.value.data.token);
+        }
+      });
     }
   };
 

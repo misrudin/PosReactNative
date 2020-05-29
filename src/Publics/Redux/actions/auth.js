@@ -1,14 +1,8 @@
 import axios from 'axios';
-import {Link} from '../../env';
+import {Link} from '../../env.js';
 
 const URL = Link();
 
-export const getAllUser = () => {
-  return {
-    type: 'USER',
-    payload: axios.get(URL + 'auth/user'),
-  };
-};
 export const register = data => {
   return {
     type: 'REGISTER',
